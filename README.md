@@ -21,6 +21,38 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Project dependencies
+
+Juice is tracked as a Git submodule at:
+
+```text
+resources/js/vendor/juice
+```
+
+Clone this application with its submodules:
+
+```bash
+git clone --recurse-submodules <repository-url>
+```
+
+For an existing checkout:
+
+```bash
+git submodule update --init --recursive
+```
+
+Update Juice to the latest commit from its configured branch, review the
+result, and commit the new submodule pointer:
+
+```bash
+git submodule update --remote resources/js/vendor/juice
+git status
+```
+
+Production deployments should use `git submodule update --init --recursive`
+without `--remote`. This installs the exact Juice commit pinned by this
+repository.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.

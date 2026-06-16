@@ -7,9 +7,19 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "keystone/laravel-toolkit": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./laravel-toolkit",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
@@ -53,7 +63,11 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force"
+        ],
+        "post-install-cmd": [
+            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

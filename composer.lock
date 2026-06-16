@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "53b5d56b3b7e3cbac1713e68c8850f6c",
+    "content-hash": "e3d100165cd39d6589ad71b7b648e11a",
     "packages": [
         {
             "name": "brick/math",
@@ -1057,6 +1057,45 @@
                 }
             ],
             "time": "2026-06-12T21:33:43+00:00"
+        },
+        {
+            "name": "keystone/laravel-toolkit",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./laravel-toolkit",
+                "reference": "d8265fd64b7ce2169bb396b72278af46a3065998"
+            },
+            "require": {
+                "illuminate/database": "^12.0",
+                "illuminate/support": "^12.0",
+                "illuminate/view": "^12.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Keystone\\Toolkit\\ToolkitServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Keystone\\Toolkit\\": "src/"
+                },
+                "files": [
+                    "src/Helpers/Helper.php"
+                ]
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Reusable Laravel models, properties, forms, views, and UI assets.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "laravel/framework",

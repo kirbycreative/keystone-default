@@ -1,0 +1,45 @@
+/** Proxima Nova **/
+
+@font-face {
+    font-family: 'calibri-bold';
+    src: url('../calibri/Calibri-Bold.woff2') format('woff2'),
+        url('../calibri/Calibri-Bold.woff') format('woff');
+    letter-spacing: 0.3em;
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'proxima-nova-bold';
+    src: url('ProximaNovaBold.eot');
+    src: url('ProximaNovaBold.eot?#iefix') format('embedded-opentype'),
+         url('ProximaNovaBold.woff2') format('woff2'),
+         url('ProximaNovaBold.woff') format('woff'),
+         url('ProximaNovaBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'proxima-nova';
+    src: url('ProximaNovaRegular.eot');
+    src: url('ProximaNovaRegular.eot?#iefix') format('embedded-opentype'),
+         url('ProximaNovaRegular.woff') format('woff'),
+         url('ProximaNovaRegular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'proxima-nova-light';
+    src: url('ProximaNovaLight.eot');
+    src: url('ProximaNovaLight.eot?#iefix') format('embedded-opentype'),
+         url('ProximaNovaLight.woff') format('woff'),
+         url('ProximaNovaLight.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}

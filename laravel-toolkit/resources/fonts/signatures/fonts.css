@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'signature-1';
+    src: url('signature-1.woff2') format('woff2'),
+        url('signature-1.woff') format('woff'),
+        url('signature-1.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'signature-2';
+    src: url('signature-2.woff2') format('woff2'),
+        url('signature-2.woff') format('woff'),
+        url('signature-2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'signature-3';
+    src: url('signature-3.woff2') format('woff2'),
+        url('signature-3.woff') format('woff'),
+        url('signature-3.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'signature-4';
+    src: url('signature-4.woff2') format('woff2'),
+        url('signature-4.woff') format('woff'),
+        url('signature-4.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+@font-face {
+    font-family: 'signature-5';
+    src: url('signature-5.woff2') format('woff2'),
+        url('signature-5.woff') format('woff'),
+        url('signature-5.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

@@ -1,0 +1,133 @@
+/* CTA Card Thumbnail - 3:4 aspect ratio */
+.ks-thumb-cta-card {
+  --thumb-bg: #f3f4f6;
+  --thumb-card: #ffffff;
+  --thumb-text: #9ca3af;
+  --thumb-text-dark: #6b7280;
+  --thumb-accent: #ea580c;
+  --thumb-border: #d1d5db;
+  --thumb-radius: 0.5rem;
+  --thumb-padding: 1rem;
+
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  max-width: 100%;
+  background: var(--thumb-card);
+  border: 1px solid var(--thumb-border);
+  border-radius: var(--thumb-radius);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: var(--thumb-padding);
+  gap: 0.75rem;
+}
+
+/* Badge */
+.ks-thumb-cta-card__badge {
+  width: 5rem;
+  height: 1.25rem;
+  background: var(--thumb-accent);
+  border-radius: 9999px;
+  opacity: 0.2;
+  margin-bottom: 0.25rem;
+}
+
+/* Content row */
+.ks-thumb-cta-card__content {
+  display: flex;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.ks-thumb-cta-card__icon {
+  width: 3rem;
+  height: 3rem;
+  background: var(--thumb-accent);
+  border-radius: 0.5rem;
+  opacity: 0.15;
+  flex-shrink: 0;
+}
+
+.ks-thumb-cta-card__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.ks-thumb-cta-card__eyebrow {
+  width: 3.5rem;
+  height: 0.5rem;
+  background: var(--thumb-accent);
+  border-radius: 1px;
+  opacity: 0.5;
+}
+
+.ks-thumb-cta-card__headline {
+  width: 70%;
+  height: 1.25rem;
+  background: var(--thumb-text-dark);
+  border-radius: 2px;
+}
+
+.ks-thumb-cta-card__description {
+  width: 100%;
+  height: 2.5rem;
+  background: var(--thumb-text);
+  border-radius: 2px;
+}
+
+/* Actions */
+.ks-thumb-cta-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--thumb-border);
+}
+
+.ks-thumb-cta-card__btn {
+  width: 6rem;
+  height: 2rem;
+  background: var(--thumb-text-dark);
+  border-radius: 4px;
+}
+
+.ks-thumb-cta-card__btn--secondary {
+  background: transparent;
+  border: 2px solid var(--thumb-text-dark);
+}
+
+/* Meta */
+.ks-thumb-cta-card__meta {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--thumb-border);
+  margin-top: 0.25rem;
+}
+
+.ks-thumb-cta-card__meta-item {
+  width: 5rem;
+  height: 0.75rem;
+  background: var(--thumb-text);
+  border-radius: 2px;
+}
+
+/* Hover */
+.ks-thumb-cta-card:hover {
+  border-color: var(--thumb-text-dark);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ks-thumb-cta-card {
+    --thumb-bg: #1f2937;
+    --thumb-card: #111827;
+    --thumb-text: #4b5563;
+    --thumb-text-dark: #9ca3af;
+    --thumb-accent: #fb923c;
+    --thumb-border: #374151;
+  }
+}

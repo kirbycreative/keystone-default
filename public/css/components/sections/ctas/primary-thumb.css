@@ -1,0 +1,116 @@
+/* CTA Primary Thumbnail - 4:3 aspect ratio */
+.ks-thumb-cta-primary {
+  --thumb-bg: #f3f4f6;
+  --thumb-card: #ffffff;
+  --thumb-text: #9ca3af;
+  --thumb-text-dark: #6b7280;
+  --thumb-accent: #d97706;
+  --thumb-border: #d1d5db;
+  --thumb-radius: 0.5rem;
+  --thumb-padding: 1.5rem;
+
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  max-width: 100%;
+  background: var(--thumb-bg);
+  border: 1px solid var(--thumb-border);
+  border-radius: var(--thumb-radius);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--thumb-padding);
+  gap: 0.75rem;
+}
+
+/* Badge */
+.ks-thumb-cta-primary__badge {
+  width: 5rem;
+  height: 1.25rem;
+  background: var(--thumb-accent);
+  border-radius: 9999px;
+  opacity: 0.2;
+}
+
+/* Icon */
+.ks-thumb-cta-primary__icon {
+  width: 3rem;
+  height: 3rem;
+  background: var(--thumb-accent);
+  border-radius: 50%;
+  opacity: 0.15;
+}
+
+/* Headline */
+.ks-thumb-cta-primary__headline {
+  width: 70%;
+  height: 1.75rem;
+  background: var(--thumb-text-dark);
+  border-radius: 2px;
+}
+
+/* Description */
+.ks-thumb-cta-primary__description {
+  width: 90%;
+  height: 2.5rem;
+  background: var(--thumb-text);
+  border-radius: 2px;
+}
+
+/* Buttons */
+.ks-thumb-cta-primary__buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.ks-thumb-cta-primary__btn {
+  width: 7rem;
+  height: 2.25rem;
+  background: var(--thumb-text-dark);
+  border-radius: 4px;
+}
+
+.ks-thumb-cta-primary__btn--secondary {
+  background: transparent;
+  border: 2px solid var(--thumb-text-dark);
+}
+
+/* Trust indicators */
+.ks-thumb-cta-primary__trust {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--thumb-border);
+  width: 100%;
+  justify-content: center;
+  opacity: 0.4;
+}
+
+.ks-thumb-cta-primary__trust-item {
+  width: 4rem;
+  height: 1rem;
+  background: var(--thumb-text);
+  border-radius: 2px;
+}
+
+/* Hover */
+.ks-thumb-cta-primary:hover {
+  border-color: var(--thumb-text-dark);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .ks-thumb-cta-primary {
+    --thumb-bg: #1f2937;
+    --thumb-card: #111827;
+    --thumb-text: #4b5563;
+    --thumb-text-dark: #9ca3af;
+    --thumb-accent: #fbbf24;
+    --thumb-border: #374151;
+  }
+}

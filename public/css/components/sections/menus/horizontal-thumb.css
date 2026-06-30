@@ -1,0 +1,99 @@
+/* Horizontal Menu Thumbnail - 16:3 aspect ratio (approx 53.33% height to width) */
+.ks-thumb-menu-horizontal {
+  --thumb-bg: #f3f4f6;
+  --thumb-text: #9ca3af;
+  --thumb-text-dark: #6b7280;
+  --thumb-border: #d1d5db;
+  --thumb-radius: 0.375rem;
+  --thumb-transition: 200ms ease;
+
+  aspect-ratio: 16 / 3;
+  width:is_w: 100%;
+  max-width: 100%;
+  background: var(--thumb-bg);
+  border: 1px solid var(--thumb-border);
+  border-radius: var(--thumb-radius);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  gap: 1.5rem;
+}
+
+.ks-thumb-menu-horizontal::before,
+.ks-thumb-menu-horizontal::after {
+  content: '';
+  position: absolute;
+  background: var(--thumb-text);
+  border-radius: 2px;
+}
+
+/* Logo area - left side */
+.ks-thumb-menu-horizontal::before {
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 1.5rem;
+  background: var(--thumb-text-dark);
+  border-radius: 4px;
+}
+
+/* Navigation items - center */
+.ks-thumb-menu-horizontal__nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.ks-thumb-menu-horizontal__nav-item {
+  width: 4.5rem;
+  height: 1rem;
+  background: var(--thumb-text);
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+.ks-thumb-menu-horizontal__nav-item:nth-child(2) {
+  width: 5.5rem;
+  background: var(--thumb-text-dark);
+  opacity: 1;
+}
+
+/* Actions - right side */
+.ks-thumb-menu-horizontal__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ks-thumb-menu-horizontal__btn {
+  width: 5rem;
+  height: 1.75rem;
+  background: var(--thumb-text-dark);
+  border-radius: 4px;
+}
+
+/* Mobile hamburger - hidden on desktop thumbnail */
+.ks-thumb-menu-horizontal__mobile {
+  display: none;
+}
+
+/* Hover effect */
+.ks-thumb-menu-horizontal:hover {
+  border-color: var(--thumb-text-dark);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .ks-thumb-menu-horizontal {
+    --thumb-bg: #1f2937;
+    --thumb-text: #4b5563;
+    --thumb-text-dark: #9ca3af;
+    --thumb-border: #374151;
+  }
+}

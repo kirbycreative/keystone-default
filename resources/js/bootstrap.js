@@ -1,4 +1,10 @@
-import axios from 'axios';
-window.axios = axios;
+import axios from "axios";
+import juice from "./vendor/juice/juice.js";
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+//Setup Juice
+juice.expose();
+juice.import("forms");
+
+//Setup Axios
+window.axios = axios;
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";

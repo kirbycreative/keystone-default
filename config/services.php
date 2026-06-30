@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    // Kirby Creative API — the client pulls templates from KC's proprietary catalog through this
+    // authenticated API (the client never holds S3 catalog credentials). The token is minted by KC
+    // at provisioning and written into this site's .env. Read via config so it survives config:cache.
+    'keystone' => [
+        'url' => env('KEYSTONE_API_URL'),
+        'token' => env('KEYSTONE_API_TOKEN'),
+    ],
+
+    // This container's network identity, written into .env at provisioning. Onboarding step 1
+    // verifies the client's domain points here by matching either its A record to the IP or its
+    // nameservers to the configured list (comma-separated).
+    'container' => [
+        'ip' => env('CONTAINER_IP'),
+        'nameservers' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('CONTAINER_NAMESERVERS', '')),
+        ))),
+    ],
+
 ];

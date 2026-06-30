@@ -1,0 +1,72 @@
+/* CTA Secondary Thumbnail - 16:5 aspect ratio (wide button) */
+.ks-thumb-cta-secondary {
+  --thumb-bg: #f3f4f6;
+  --thumb-text: #9ca3af;
+  --thumb-text-dark: #6b7280;
+  --thumb-accent: #ea580c;
+  --thumb-border: #d1d5db;
+  --thumb-radius: 0.5rem;
+
+  aspect-ratio: 16 / 5;
+  width: 100%;
+  max-width: 100%;
+  background: var(--thumb-bg);
+  border: 2px solid var(--thumb-border);
+  border-radius: var(--thumb-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  gap: 0.75rem;
+}
+
+.ks-thumb-cta-secondary__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--thumb-accent);
+  border-radius: 0.5rem;
+  opacity: 0.15;
+}
+
+.ks-thumb-cta-secondary__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ks-thumb-cta-secondary__eyebrow {
+  width: 4rem;
+  height: 0.5rem;
+  background: var(--thumb-text);
+  border-radius: 1px;
+}
+
+.ks-thumb-cta-secondary__label {
+  width: 8rem;
+  height: 1rem;
+  background: var(--thumb-text-dark);
+  border-radius: 2px;
+}
+
+.ks-thumb-cta-secondary__chevron {
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--thumb-text);
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+.ks-thumb-cta-secondary:hover {
+  border-color: var(--thumb-text-dark);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ks-thumb-cta-secondary {
+    --thumb-bg: #1f2937;
+    --thumb-text: #4b5563;
+    --thumb-text-dark: #9ca3af;
+    --thumb-accent: #fb923c;
+    --thumb-border: #374151;
+  }
+}

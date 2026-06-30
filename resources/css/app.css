@@ -1,11 +1,11 @@
-@import 'tailwindcss';
+@import url("./default.css");
+@import url("./layout.css");
+@import url("../../laravel-toolkit/resources/css/admin.css");
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+:root{
+    --input-padding:0.4rem;
+    --input-button-bgcolor: #0070bb;
+    --form-label-color:#FFF;
+    --form-feedback-color: #333;
 }

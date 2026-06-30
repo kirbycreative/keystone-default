@@ -336,6 +336,38 @@ protected function onSchemaReady(array $schema): void
 Do not mutate the property definition per request. Schemas are cached by model
 class for the lifetime of the PHP process.
 
+## Keystone admin models
+
+The client admin panel models should also extend `Keystone\Toolkit\Models\AppModel`.
+Do not add separate `$fillable` arrays or `casts()` methods for new admin
+models unless the toolkit cannot represent the behavior.
+
+`App\Models\ContentAsset` uses `$properties` for:
+
+| Property | Purpose |
+| --- | --- |
+| `title` | Optional display name for the uploaded source material. |
+| `type` | Required asset category such as menu, promotion, advertisement, brand, photo, document, or other. |
+| `notes` | Optional ingestion guidance, limited to 2000 characters. |
+| `ingestion_result` | Array cast for future analysis output. |
+
+`App\Models\PageSuggestion` uses `$properties` for:
+
+| Property | Purpose |
+| --- | --- |
+| `title`, `slug`, `summary`, `rationale` | Suggested page structure and explanation. |
+| `source_asset_ids` | Array cast of uploaded assets that informed the suggestion. |
+| `suggested_copy` | Array cast for generated copy sections. |
+| `status` | Review status: `suggested`, `approved`, or `rejected`. |
+| `rejection_feedback` | Reviewer explanation required when a suggestion is denied. |
+| `reviewed_at` | Datetime cast marking when approve or deny was submitted. |
+
+Admin forms should be instances of `Keystone\Toolkit\Forms\Form`, including
+login, logout, upload, review, approve, and deny actions. Custom row layouts can
+still be rendered by passing a field-level `view`, but the enclosing `<form>`,
+CSRF field, method spoofing, submit button, and normal field rendering should
+come from the toolkit builder.
+
 ## Package updates
 
 The Laravel application loads the package through the local Composer path

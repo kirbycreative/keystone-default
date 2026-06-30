@@ -1,8 +1,6 @@
-@props([
-    'value' => 'Submit',
-])
+@php
+    $value ??= 'Submit';
+    $attributes ??= [];
+@endphp
 
-<input-button
-    type="submit"
-    label="{{ $value }}"
-></input-button>
+<input-button type="submit" label="{{ $value }}"></input-button>

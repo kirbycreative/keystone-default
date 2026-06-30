@@ -143,16 +143,23 @@ if (!function_exists('page')) {
         private $_vite = [];
         public $heading = null;
         public $description = null;
+        public $title = null;
+
+        /** Arbitrary data exposed to the browser as window.app.data via the head. */
+        private $_data = [];
 
         public $id;
         public $class;
         public $url;
+        public $path;
         public $head = [];
 
         function __construct($config = [])
         {
 
             $this->url = $_SERVER['REQUEST_URI'];
+            $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $this->id = str_replace('/', '-', trim($this->path, "/"));
 
             if (!empty($config)) $this->apply($config);
         }
@@ -165,16 +172,46 @@ if (!function_exists('page')) {
             }
 
             if (isset($config['class'])) {
-                $this->classes[] = $config['class'];
+                foreach ((array) $config['class'] as $class) {
+                    $this->classes[] = $class;
+                }
+            }
+
+            if (isset($config['title'])) {
+                $this->title = $config['title'];
+            }
+
+            if (isset($config['heading'])) {
+                $this->heading = $config['heading'];
+            }
+
+            if (isset($config['description'])) {
+                $this->description = $config['description'];
             }
 
             if (isset($config['js'])) {
-                $this->js = array_merge($this->js, $config['js']);
+                $this->js = array_merge($this->js, (array) $config['js']);
             }
 
             if (isset($config['stylesheets'])) {
-                $this->stylesheets = array_merge($this->stylesheets, $config['stylesheets']);
+                $this->stylesheets = array_merge($this->stylesheets, (array) $config['stylesheets']);
             }
+
+            if (isset($config['vite'])) {
+                foreach ((array) $config['vite'] as $path) {
+                    $this->_vite[] = $path;
+                }
+            }
+
+            if (isset($config['data']) && is_array($config['data'])) {
+                $this->_data = array_merge($this->_data, $config['data']);
+            }
+
+            if (isset($config['head'])) {
+                $this->head[] = $config['head'];
+            }
+
+            return $this;
         }
 
         public function vite($path)
@@ -187,20 +224,67 @@ if (!function_exists('page')) {
             $this->head[] = $appends;
         }
 
+        public function addClass($class)
+        {
+            $this->classes[] = $class;
+        }
+
         public function class()
         {
-            //Compile AND return ClassName
-            return join(array_merge($this->classes, func_get_args()));
+            // Space-separated class list from configured classes plus any passed at call time.
+            return implode(' ', array_merge($this->classes, func_get_args()));
+        }
+
+        public function setTitle($title)
+        {
+            $this->title = $title;
+            return $this;
         }
 
         public function setHeading($heading)
         {
             $this->heading = $heading;
+            return $this;
         }
 
         public function setDescription($description)
         {
             $this->description = $description;
+            return $this;
+        }
+
+        /**
+         * Set a key on the browser data bag (window.app.data).
+         */
+        public function setData($key, $value)
+        {
+            $this->_data[$key] = $value;
+            return $this;
+        }
+
+        /**
+         * Read the data bag — a single key, or the whole bag when no key is given.
+         */
+        public function data($key = null)
+        {
+            if ($key === null) {
+                return $this->_data;
+            }
+
+            return $this->_data[$key] ?? null;
+        }
+
+        public function has($key)
+        {
+            return isset($this->_data[$key]) && $this->_data[$key] !== null;
+        }
+
+        /**
+         * The data bag as JSON for the head's window.app bootstrap.
+         */
+        public function dataJson()
+        {
+            return json_encode($this->_data);
         }
 
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ContentAsset;
 use App\Models\PageSuggestion;
 use App\Models\User;
+use App\Services\SiteMapGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ class AdminPanelTest extends TestCase
 
     public function test_guest_lands_on_login_before_admin_panel(): void
     {
-        $this->get('/')->assertRedirect(route('login'));
+        $this->get('/')->assertOk();
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
     }
 
@@ -32,13 +33,14 @@ class AdminPanelTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
 
-        $this->get('/')->assertRedirect(route('admin.dashboard'));
+        $this->get('/')->assertOk();
         $this->get(route('admin.dashboard'))->assertOk()->assertSee('Admin Dashboard');
     }
 
     public function test_admin_can_upload_a_private_content_asset(): void
     {
         Storage::fake('local');
+        config(['keystone.client_assets.disk' => 'local']);
 
         $user = User::factory()->create();
         $file = UploadedFile::fake()->create('summer-menu.pdf', 128, 'application/pdf');
@@ -67,6 +69,17 @@ class AdminPanelTest extends TestCase
 
     public function test_admin_can_review_uploads_and_generate_page_suggestions(): void
     {
+        $this->mock(SiteMapGenerator::class, function ($mock): void {
+            $mock->shouldReceive('generate')->once()->andReturn([
+                'model' => 'test-model',
+                'pages' => [
+                    ['title' => 'Home', 'slug' => '/', 'parent_slug' => null, 'summary' => 'Home page.', 'rationale' => 'Primary entry point.', 'sections' => ['Hero']],
+                    ['title' => 'Menu', 'slug' => 'menu', 'parent_slug' => '/', 'summary' => 'Menu page.', 'rationale' => 'A menu was uploaded.', 'sections' => ['Featured items']],
+                    ['title' => 'Offers', 'slug' => 'offers', 'parent_slug' => '/', 'summary' => 'Offers page.', 'rationale' => 'A promotion was uploaded.', 'sections' => ['Current offers']],
+                ],
+            ]);
+        });
+
         $user = User::factory()->create();
         $menu = ContentAsset::create([
             'user_id' => $user->id,

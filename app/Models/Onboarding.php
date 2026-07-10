@@ -30,15 +30,15 @@ class Onboarding extends AppModel
             'rules' => ['required', 'string', 'max:255'],
             'form' => ['type' => 'text', 'label' => 'Company name', 'placeholder' => 'Your business name'],
         ],
-        'slogans' => [
-            'fillable' => true,
-            'rules' => ['nullable', 'string', 'max:2000'],
-            'form' => ['type' => 'textarea', 'label' => 'Slogans or taglines', 'help' => 'Optional — one per line.'],
-        ],
         'business_category' => [
             'fillable' => true,
             'rules' => ['required', 'string', 'max:255'],
             'form' => ['type' => 'text', 'label' => 'Business category', 'placeholder' => 'e.g. Italian restaurant, law firm, gym'],
+        ],
+        'slogans' => [
+            'fillable' => true,
+            'rules' => ['nullable', 'string', 'max:2000'],
+            'form' => ['type' => 'textarea', 'label' => 'Slogans or taglines', 'help' => 'Optional — one per line.'],
         ],
         'region' => [
             'fillable' => true,
@@ -49,6 +49,7 @@ class Onboarding extends AppModel
             'fillable' => true,
             'rules' => ['required', 'in:regional,national'],
             'form' => [
+                'class' => "flex:static w:50",
                 'type' => 'select',
                 'label' => 'Audience reach',
                 'options' => ['Regional / local' => self::SCOPE_REGIONAL, 'Countrywide' => self::SCOPE_NATIONAL],
@@ -56,7 +57,7 @@ class Onboarding extends AppModel
         ],
         'logo' => [
             'fillable' => false,
-            'form' => ['type' => 'file', 'label' => 'Logo', 'view' => 'admin.onboarding.partials.logo-field'],
+            'form' => ['type' => 'image', 'label' => 'Logo', 'view' => 'admin.onboarding.partials.logo-field'],
         ],
         'primary_colors' => [
             'fillable' => true,

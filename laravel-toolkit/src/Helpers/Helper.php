@@ -157,8 +157,8 @@ if (!function_exists('page')) {
         function __construct($config = [])
         {
 
-            $this->url = $_SERVER['REQUEST_URI'];
-            $this->path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $this->url = request()->getRequestUri();
+            $this->path = request()->getPathInfo();
             $this->id = str_replace('/', '-', trim($this->path, "/"));
 
             if (!empty($config)) $this->apply($config);

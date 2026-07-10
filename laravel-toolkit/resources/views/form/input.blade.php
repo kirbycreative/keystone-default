@@ -8,24 +8,23 @@
     $placeholder ??= null;
     $checked ??= false;
     $id = $attributes['id'] ?? 'input--' . trim(preg_replace('/[^a-zA-Z0-9_-]+/', '-', $name), '-');
-    $baseClass =
-        $attributes['class'] ??
-        'admin-field margin:top:0o5 w:100';
+    $baseClass = $attributes['class'] ?? 'admin-field margin:top:0o5 w:100';
     $checkboxValue = $value !== '' && $value !== null ? $value : 1;
-    $requiredAttr = ! empty($required ?? false) ? ' required' : '';
-    $validationAttr = ! empty($validation ?? null)
-        ? ' validation="' . e($validation) . '"'
-        : '';
+    $requiredAttr = !empty($required ?? false) ? ' required' : '';
+    $validationAttr = !empty($validation ?? null) ? ' validation="' . e($validation) . '"' : '';
     $constraintAttr = $requiredAttr . $validationAttr;
-    $placeholderAttr = ! empty($placeholder ?? null)
-        ? ' placeholder="' . e($placeholder) . '"'
-        : '';
+    $placeholderAttr = !empty($placeholder ?? null) ? ' placeholder="' . e($placeholder) . '"' : '';
 @endphp
 
 @switch($type)
     @case('hidden')
         <input type="hidden" name="{{ $name }}" value="{{ $value }}" />
     @break;
+    @case('image')
+        <input-image name="{{ $name }}" label="{{ $label }}"{!! $constraintAttr !!}></input-image>
+        <div>{{ $value }}</div>
+    @break
+
     @case('file')
         <input-file name="{{ $name }}" label="{{ $label }}"{!! $constraintAttr !!}></input-file>
         <div>{{ $value }}</div>
@@ -45,7 +44,8 @@
     @break
 
     @case('select')
-        <input-select name="{{ $name }}" label="{{ $label }}" value="{{ $value }}"{!! $constraintAttr !!}>
+        <input-select name="{{ $name }}" label="{{ $label }}"
+            value="{{ $value }}"{!! $constraintAttr !!}>
             @foreach ($options ?? [] as $olabel => $ovalue)
                 <select-option value="{{ $ovalue }}" label="{{ $olabel }}" @selected((string) $ovalue === (string) $value)>
                     {{ $olabel }}
@@ -93,7 +93,8 @@
     @break
 
     @case('textarea')
-        <input-textarea name="{{ $name }}" label="{{ $label }}" value="{{ $value }}"{!! $constraintAttr !!}></input-textarea>
+        <input-textarea name="{{ $name }}" label="{{ $label }}"
+            value="{{ $value }}"{!! $constraintAttr !!}></input-textarea>
     @break
 
     @case('number')

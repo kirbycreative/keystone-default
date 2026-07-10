@@ -347,6 +347,47 @@ label.table__row:hover{ background:rgba(255,255,255,.03); }
 
 #admin-onboarding{
 
+    .color-swatch{
+        position: relative;
+        aspect-ratio: 1 / 1;
+        width: 80px;
+        border: 1px solid #333;
+        background-color: #FFFFFF;
+        input-color{
+            position: absolute;
+            top:0;
+            left:0;
+            z-index: 10;
+            width:300px;
+        }
+        .color-remove{
+            position: absolute;
+            top:5px;
+            right:5px;
+            width:15px;
+            height:15px;
+            text-align:right;
+            vertical-align:top;
+            border-radius:0;
+            border:none;
+            background:#FFF;
+            color:#333;
+            font-size:1.2rem;
+            line-height:0.8;
+            cursor:pointer;
+            border-left: 1px solid #d2d2d2;
+            border-bottom: 1px solid #d2d2d2;
+        }
+        .color{
+            position: absolute;
+            top:5px;
+            left:5px;
+            right:5px;
+            bottom:5px;
+            border: 1px solid #d2d2d2;
+        }
+    }
+
     #page-container{
        
 

@@ -7,16 +7,25 @@ use App\Http\Controllers\Admin\PageSuggestionController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TemplateViewerController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('admin.dashboard')
-        : redirect()->route('login');
-});
+Route::view('/', 'welcome')->name('home');
+Route::get('/health', function () {
+    DB::select('select 1');
+    Storage::disk(config('filesystems.default'))->put('.healthcheck', now()->toIso8601String());
+    Storage::disk(config('filesystems.default'))->delete('.healthcheck');
+
+    return response()->json(['status' => 'ok']);
+})->name('health');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])->name('password.email');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])->name('password.update');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])

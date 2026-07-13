@@ -1,3 +1,3 @@
 [submodule "resources/js/vendor/juice"]
 	path = resources/js/vendor/juice
-	url = git@github.com:js-juice/juice.git
+	url = https://github.com/js-juice/juice.git

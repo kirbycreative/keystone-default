@@ -46,7 +46,10 @@ if (!isset($page)) {
     </script>
 
     <!-- Global JS/CSS -->
-    @vite(['resources/js/app.js', 'resources/css/app.css'])
+    @vite(['resources/css/site-variables.css', 'resources/scss/site.scss', 'resources/js/app.js'])
+    @if (request()->is('admin/*'))
+        @vite('resources/css/admin.css')
+    @endif
 
     <?php
     // Render page-specific JS/CSS

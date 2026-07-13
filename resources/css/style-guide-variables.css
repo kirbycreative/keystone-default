@@ -1,3 +1,8 @@
+/*
+ * Style guide output contract.
+ * The color/style guide owns values in this file. base.scss owns how they
+ * are applied. Do not add selectors or component rules here.
+ */
 :root {
     --color-background: #ffffff;
     --color-surface: #f2f2f2;

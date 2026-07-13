@@ -1,4 +1,10 @@
 @use "sass:color";
+/*
+ * Base style implementation contract.
+ * This file consumes style-guide-variables.css and applies those tokens to
+ * global elements, shared controls, utilities, and site-shell components.
+ * Do not define theme values here.
+ */
 @import url("../css/default.css");
 @import url("../css/layout.css");
 @import url("https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100..900;1,100..900&display=swap");
@@ -132,8 +138,7 @@ a.nav-login {
 }
 
 .form-row-full,
-.form-button,
-.form-status {
+.form-button {
     grid-column: 1 / -1;
 }
 
@@ -144,9 +149,7 @@ label,
     font-weight: 800;
 }
 
-input,
-select,
-textarea {
+:is(input, select, textarea) {
     width: 100%;
     padding: 0.85rem;
     border: 1px solid var(--line);
@@ -165,6 +168,7 @@ textarea {
 }
 
 .form-status {
+    grid-column: 1 / -1;
     padding: 0.85rem;
     border-radius: 8px;
     color: var(--color-success);

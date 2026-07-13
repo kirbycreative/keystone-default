@@ -2,6 +2,7 @@ FROM node:22-alpine AS frontend
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+COPY laravel-toolkit laravel-toolkit
 COPY resources resources
 COPY vite.config.js ./
 RUN npm run build

@@ -14,7 +14,7 @@ COPY laravel-toolkit laravel-toolkit
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 FROM php:8.4-fpm-alpine
-RUN apk add --no-cache nginx supervisor libzip-dev icu-dev oniguruma-dev \
+RUN apk add --no-cache nginx supervisor libzip-dev icu-dev oniguruma-dev sqlite-dev \
     && docker-php-ext-install bcmath intl mbstring opcache pcntl pdo_mysql pdo_sqlite zip
 WORKDIR /var/www/html
 COPY . .

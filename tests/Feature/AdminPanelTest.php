@@ -19,7 +19,7 @@ class AdminPanelTest extends TestCase
 
     public function test_guest_lands_on_login_before_admin_panel(): void
     {
-        $this->get('/')->assertOk();
+        $this->get('/')->assertRedirect(route('admin.dashboard'));
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
     }
 

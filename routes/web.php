@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('admin.dashboard')
-        : view('welcome');
+    return redirect()->route('admin.dashboard');
 })->name('home');
 
 Route::get('/health', function () {

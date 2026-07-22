@@ -21,6 +21,12 @@ class AdminPanelTest extends TestCase
     {
         $this->get('/')->assertRedirect(route('admin.dashboard'));
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('name="email"', false)
+            ->assertSee('name="password"', false)
+            ->assertSee('Forgot password?')
+            ->assertDontSee('juice-forms', false);
     }
 
     public function test_https_proxy_headers_are_used_for_routes_and_vite_assets(): void

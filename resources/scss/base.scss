@@ -363,6 +363,105 @@ p.light {
     color: var(--color-text-muted);
 }
 
+.auth-shell {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: clamp(1.5rem, 5vw, 4rem);
+    background:
+        radial-gradient(circle at 15% 15%, color-mix(in srgb, var(--color-primary) 22%, transparent), transparent 38%),
+        var(--color-background);
+}
+
+.auth-card {
+    width: min(100%, 30rem);
+    padding: clamp(2rem, 6vw, 3.25rem);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+}
+
+.auth-logo {
+    display: block;
+    width: min(15rem, 75%);
+    height: auto;
+    margin: 0 auto 2.5rem;
+}
+
+.auth-heading {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth-heading h1,
+.auth-heading p {
+    margin-top: 0;
+}
+
+.auth-heading h1 {
+    margin-bottom: 0.5rem;
+}
+
+.auth-heading p {
+    margin-bottom: 0;
+}
+
+.auth-form {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.auth-form label {
+    color: var(--color-text-primary);
+}
+
+.auth-password-label,
+.auth-remember {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.auth-password-label a {
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.auth-remember {
+    justify-content: flex-start;
+    margin: 0.25rem 0 0.75rem;
+    font-weight: 500;
+}
+
+.auth-remember input {
+    width: 1rem;
+    margin: 0;
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 0.9rem 1.25rem;
+    border: 0;
+    border-radius: 0.5rem;
+    color: var(--color-primary-text);
+    background: var(--color-primary);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.auth-submit:hover {
+    background: var(--color-link-hover);
+}
+
+.auth-error {
+    margin: -0.25rem 0 0;
+    color: var(--color-error);
+    font-size: 0.875rem;
+}
+
 .inverse {
     color: var(--color-text-inverse);
 }

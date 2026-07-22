@@ -7,15 +7,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Keystone\Toolkit\Forms\Form;
 
 class LoginController extends AdminController
 {
     public function create(): View
     {
-        return view('auth.login', [
-            'loginForm' => $this->loginForm(),
-        ]);
+        return view('auth.login');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,32 +43,4 @@ class LoginController extends AdminController
         return redirect()->route('login');
     }
 
-    private function loginForm(): Form
-    {
-        return (new Form())
-            ->setAction(route('login.store'))
-            ->setAttributes(['class' => 'margin:top:2 flex:column gap:1'])
-            ->setSubmit('Log in', [
-                'class' => 'btn btn--primary w:100',
-            ])
-            ->setSchema([
-                'form' => [
-                    'email' => [
-                        'type' => 'email',
-                        'label' => 'Email',
-                        'attributes' => ['required' => true, 'autofocus' => true],
-                    ],
-                    'password' => [
-                        'type' => 'password',
-                        'label' => 'Password',
-                        'attributes' => ['required' => true],
-                    ],
-                    'remember' => [
-                        'type' => 'checkbox',
-                        'label' => 'Remember me',
-                        'checked' => old('remember') === '1',
-                    ],
-                ],
-            ]);
-    }
 }

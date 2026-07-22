@@ -1,36 +1,28 @@
 <?php page()->id = 'login'; ?>
 
 <x-layouts.kc-default title="Login">
-    <main class="auth-shell">
-        <section class="auth-card" aria-labelledby="login-title">
-            <img class="auth-logo" src="{{ Vite::asset('resources/images/logo/logo-long-2-lt.png') }}" alt="Keystone">
+    <div class="account-login-page">
+        <section class="account-login-card">
+            <p class="eyebrow">Keystone account</p>
+            <h1>Sign in.</h1>
 
-            <div class="auth-heading">
-                <p class="eyebrow">Website dashboard</p>
-                <h1 id="login-title">Welcome back</h1>
-                <p>Sign in to manage your website.</p>
-            </div>
-
-            <form class="auth-form" method="POST" action="{{ route('login.store') }}">
+            <form class="lead-form admin-login-form" method="POST" action="{{ route('login.store') }}">
                 @csrf
 
-                <label for="email">Email address</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="email">
-                @error('email') <p class="auth-error">{{ $message }}</p> @enderror
+                @if (session('status'))
+                    <div class="form-success">{{ session('status') }}</div>
+                @endif
 
-                <div class="auth-password-label">
-                    <label for="password">Password</label>
-                    <a href="{{ route('password.request') }}">Forgot password?</a>
-                </div>
-                <input id="password" type="password" name="password" required autocomplete="current-password">
+                @if ($errors->any())
+                    <div class="form-error-box">{{ $errors->first() }}</div>
+                @endif
 
-                <label class="auth-remember">
-                    <input type="checkbox" name="remember" value="1" @checked(old('remember'))>
-                    <span>Keep me signed in</span>
-                </label>
-
-                <button class="auth-submit" type="submit">Sign in</button>
+                <input-text name="email" type="email" label="Email" value="{{ old('email') }}" autocomplete="email" validation="required|email" autofocus></input-text>
+                <input-text name="password" type="password" label="Password" autocomplete="current-password" required></input-text>
+                <input-checkbox name="remember" label="Remember this browser" value="1"></input-checkbox>
+                <input-button class="form-button" type="submit" label="Log In"></input-button>
+                <a href="{{ route('password.request') }}">Reset your password</a>
             </form>
         </section>
-    </main>
+    </div>
 </x-layouts.kc-default>

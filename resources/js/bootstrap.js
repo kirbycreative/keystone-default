@@ -1,9 +1,9 @@
 import axios from "axios";
 import juice from "./vendor/juice/juice.js";
+import "./vendor/juice/forms/index.mjs";
 
 //Setup Juice
 juice.expose();
-juice.import("forms");
 
 //Setup Axios
 window.axios = axios;

@@ -23,6 +23,21 @@ class AdminPanelTest extends TestCase
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
     }
 
+    public function test_https_proxy_headers_are_used_for_routes_and_vite_assets(): void
+    {
+        $response = $this
+            ->withServerVariables(['REMOTE_ADDR' => '10.0.0.10'])
+            ->withHeaders([
+                'X-Forwarded-Host' => 'client.example.test',
+                'X-Forwarded-Proto' => 'https',
+            ])
+            ->get('/login');
+
+        $response->assertOk();
+        $this->assertStringNotContainsString('http://client.example.test/', $response->getContent());
+        $this->assertStringContainsString('https://client.example.test/build/assets/', $response->getContent());
+    }
+
     public function test_user_can_log_in_and_reach_admin_dashboard(): void
     {
         User::factory()->create([

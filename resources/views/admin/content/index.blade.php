@@ -58,7 +58,7 @@
             <div id="asset-dropzone" class="asset-dropzone margin:top:1">
                 <p class="muted margin:0">Drag &amp; drop files here, or click to choose.</p>
                 <input type="file" id="asset-drop-input" class="hidden" multiple
-                    accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.rtf">
+                    accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.docx,.xls,.xlsx,.csv,.txt,.rtf">
             </div>
             <div id="asset-drop-list" class="asset-dropzone__list"></div>
 

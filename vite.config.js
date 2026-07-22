@@ -9,7 +9,8 @@ export default defineConfig({
                 "resources/css/style-guide-variables.css",
                 "resources/scss/base.scss",
                 "resources/css/admin.css",
-                "resources/js/app.js"
+                "resources/js/app.js",
+                "resources/images/logo/logo-long-2-lt.png"
             ],
             refresh: true
         })

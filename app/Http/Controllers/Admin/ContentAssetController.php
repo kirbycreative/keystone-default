@@ -4,18 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\AdminController;
 use App\Models\ContentAsset;
+use App\Services\ContentAssetSynchronizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Keystone\Toolkit\Forms\Form;
+use Keystone\Toolkit\Services\KeystoneApiService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Throwable;
 
 class ContentAssetController extends AdminController
 {
     public function index(): View
     {
+        app(ContentAssetSynchronizer::class)->syncForUser((int) auth()->id());
         page()->setTitle('Content Intake');
 
         return view('admin.content.index', [
@@ -27,8 +33,9 @@ class ContentAssetController extends AdminController
 
     public function review(): View
     {
+        app(ContentAssetSynchronizer::class)->syncForUser((int) auth()->id());
 
-        page()->setTitle("Review Uploads");
+        page()->setTitle('Review Uploads');
         $assets = ContentAsset::latest()->get();
 
         return view('admin.content.review', [
@@ -41,12 +48,12 @@ class ContentAssetController extends AdminController
     public function store(Request $request): RedirectResponse
     {
         $rules = ContentAsset::rules();
-        $rules['type'][] = 'in:' . implode(',', array_keys(ContentAsset::types()));
+        $rules['type'][] = 'in:'.implode(',', array_keys(ContentAsset::types()));
         $rules['asset'] = [
             'required',
             'file',
             'max:25600',
-            'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,csv,txt,rtf',
+            'mimes:jpg,jpeg,png,webp,gif,pdf,docx,xls,xlsx,csv,txt,rtf',
         ];
 
         $validated = $request->validate($rules);
@@ -54,7 +61,7 @@ class ContentAssetController extends AdminController
         $file = $request->file('asset');
         $stored = $request->user()->uploadPrivate($file, 'business-assets');
 
-        ContentAsset::create([
+        $asset = ContentAsset::create([
             'user_id' => $request->user()->id,
             'title' => $validated['title'] ?: pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'type' => $validated['type'],
@@ -65,7 +72,10 @@ class ContentAssetController extends AdminController
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'ingestion_status' => ContentAsset::STATUS_PENDING,
+            'remote_request_id' => (string) Str::uuid(),
         ]);
+
+        $this->submitAsset($asset, $file);
 
         return redirect()
             ->route('admin.content.index')
@@ -83,7 +93,7 @@ class ContentAssetController extends AdminController
                 'required',
                 'file',
                 'max:25600',
-                'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,csv,txt,rtf',
+                'mimes:jpg,jpeg,png,webp,gif,pdf,docx,xls,xlsx,csv,txt,rtf',
             ],
         ]);
 
@@ -100,7 +110,10 @@ class ContentAssetController extends AdminController
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'ingestion_status' => ContentAsset::STATUS_PENDING,
+            'remote_request_id' => (string) Str::uuid(),
         ]);
+
+        $this->submitAsset($asset, $file);
 
         return response()->json([
             'ok' => true,
@@ -124,12 +137,43 @@ class ContentAssetController extends AdminController
         );
     }
 
+    private function submitAsset(ContentAsset $asset, UploadedFile $file): void
+    {
+        try {
+            $response = app(KeystoneApiService::class)->uploadAsset(
+                $file,
+                $asset->id,
+                $asset->type,
+                $asset->title,
+                $asset->notes,
+                $asset->remote_request_id,
+            );
+            $remoteId = data_get($response, 'asset.id');
+
+            if (! is_string($remoteId) || $remoteId === '') {
+                throw new \RuntimeException('Kirby Creative returned an invalid asset resource.');
+            }
+
+            $asset->update([
+                'remote_id' => $remoteId,
+                'remote_status' => data_get($response, 'asset.status', 'queued'),
+                'remote_error' => null,
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+            $asset->update([
+                'remote_status' => ContentAsset::STATUS_FAILED,
+                'remote_error' => $exception->getMessage(),
+            ]);
+        }
+    }
+
     private function uploadForm(): Form
     {
 
-        page()->setTitle("Content Intake");
+        page()->setTitle('Content Intake');
 
-        return (new Form())
+        return (new Form)
             ->setAction(route('admin.content.store'))
             ->setAttributes(['class' => 'margin:top:1 flex:column gap:1'])
             ->setSubmit('Upload and queue asset', [
@@ -168,7 +212,7 @@ class ContentAssetController extends AdminController
 
     private function reviewForm($assets): Form
     {
-        page()->setTitle("Review Uploads");
+        page()->setTitle('Review Uploads');
         $selectedAssetIds = array_map('intval', (array) old('asset_ids', $assets->modelKeys()));
         $fields = [
             'reviewed' => [
@@ -178,7 +222,7 @@ class ContentAssetController extends AdminController
         ];
 
         foreach ($assets as $asset) {
-            $fields['asset_' . $asset->id] = [
+            $fields['asset_'.$asset->id] = [
                 'view' => 'admin.content.partials.review-asset-field',
                 'type' => 'checkbox',
                 'name' => 'asset_ids[]',
@@ -189,7 +233,7 @@ class ContentAssetController extends AdminController
             ];
         }
 
-        return (new Form())
+        return (new Form)
             ->setAction(route('admin.page-suggestions.generate'))
             ->setAttributes(['class' => 'margin:top:2'])
             ->setSubmit('Generate suggestions', [

@@ -17,6 +17,8 @@ class Form
     protected $attributes = [];
     protected $submit = ['value' => 'Submit'];
 
+    public $formInfo = true;
+
     public function __construct($data = [])
     {
         if (!empty($this->actionRoute)) {
@@ -145,11 +147,35 @@ class Form
 
         $formId = $attributes['id'] ?? null;
         $formInfoFor = $formId ? ' for="' . e($formId) . '"' : '';
-        array_push($rendered, '<form-info' . $formInfoFor . '></form-info>');
+        if ($this->formInfo) {
+            array_push($rendered, '<form-info' . $formInfoFor . '></form-info>');
+        }
 
         $propertyRules = $this->modelRulesByField();
+        $activeFieldset = null;
 
         foreach ($fields as $key => $field) {
+            $fieldset = array_key_exists('fieldset', $field)
+                ? ($field['fieldset'] !== '' ? (string) $field['fieldset'] : null)
+                : $activeFieldset;
+
+            if ($fieldset !== $activeFieldset) {
+                if ($activeFieldset !== null) {
+                    array_push($rendered, '</div></fieldset>');
+                }
+
+                if ($fieldset !== null) {
+                    array_push(
+                        $rendered,
+                        '<fieldset class="form-fieldset"><legend class="form-fieldset__legend">'
+                            .e($fieldset)
+                            .'</legend><div class="form-fieldset__fields">'
+                    );
+                }
+
+                $activeFieldset = $fieldset;
+            }
+
             $name = $field['name'] ?? $key;
             $hasExplicitValue = array_key_exists('value', $field);
 
@@ -177,6 +203,11 @@ class Form
 
             array_push($rendered, $view);
         }
+
+        if ($activeFieldset !== null) {
+            array_push($rendered, '</div></fieldset>');
+        }
+
         $submit = view('toolkit::form.submit', $this->submit())->render();
         array_push($rendered, $submit);
         array_push($rendered, '</form>');
@@ -186,8 +217,8 @@ class Form
     protected function renderAttributes(array $attributes): string
     {
         return collect($attributes)
-            ->filter(fn ($value) => $value !== null && $value !== false)
-            ->map(fn ($value, $key) => $value === true ? e($key) : e($key) . '="' . e($value) . '"')
+            ->filter(fn($value) => $value !== null && $value !== false)
+            ->map(fn($value, $key) => $value === true ? e($key) : e($key) . '="' . e($value) . '"')
             ->implode(' ');
     }
 

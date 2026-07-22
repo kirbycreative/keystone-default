@@ -23,6 +23,10 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 
 ## Project dependencies
 
+The server-to-server contract between this client and Kirby Creative is documented in
+[`docs/CLIENT_SITE_API_REQUIREMENTS.md`](docs/CLIENT_SITE_API_REQUIREMENTS.md). Client installations
+must use that API boundary for AI work and must not contain AI-provider credentials.
+
 Juice is tracked as a Git submodule at:
 
 ```text

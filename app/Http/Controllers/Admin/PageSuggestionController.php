@@ -5,19 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\AdminController;
 use App\Models\ContentAsset;
 use App\Models\PageSuggestion;
-use App\Services\SiteMapGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Keystone\Toolkit\Forms\Form;
-use Keystone\Toolkit\Services\OpenRouterService;
+use Keystone\Toolkit\Services\KeystoneApiService;
 use RuntimeException;
+use Illuminate\Support\Str;
 
 class PageSuggestionController extends AdminController
 {
     public function index(Request $request): View
     {
+        $this->syncRemoteLayout($request);
         page()->setTitle('Page Suggestions');
 
         $suggestions = PageSuggestion::query()
@@ -63,50 +64,49 @@ class PageSuggestionController extends AdminController
                 ->withErrors(['asset_ids' => 'Upload or select at least one asset before generating page suggestions.']);
         }
 
+        $onboarding = $request->user()->onboardingState();
+        $remoteAssetIds = $assets->pluck('remote_id')->filter()->values()->all();
+
+        if (count($remoteAssetIds) !== $assets->count() || ! $onboarding->generation_remote_id) {
+            return redirect()->route('admin.content.review')->withErrors([
+                'asset_ids' => 'Wait for every selected upload and the initial site brief to finish syncing before generating suggestions.',
+            ]);
+        }
+
+        $requestId = $onboarding->site_layout_request_id ?: (string) Str::uuid();
+        $onboarding->update(['site_layout_request_id' => $requestId, 'site_layout_status' => 'submitting', 'site_layout_error' => null]);
+
         try {
-            $generated = app(SiteMapGenerator::class)->generate($assets);
-        } catch (RuntimeException $exception) {
+            $response = app(KeystoneApiService::class)->createSiteLayout([
+                'schema_version' => 1,
+                'request_id' => $requestId,
+                'asset_ids' => $remoteAssetIds,
+                'base_submission_id' => $onboarding->generation_remote_id,
+            ], $requestId);
+            $remoteId = data_get($response, 'site_layout.id');
+
+            if (! is_string($remoteId) || $remoteId === '') {
+                throw new RuntimeException('Kirby Creative returned an invalid site-layout resource.');
+            }
+        } catch (\Throwable $exception) {
             report($exception);
+
+            $onboarding->update(['site_layout_status' => 'failed', 'site_layout_error' => $exception->getMessage()]);
 
             return redirect()
                 ->route('admin.content.review')
                 ->withErrors(['asset_ids' => 'AI site map generation failed. Please try again. (' . $exception->getMessage() . ')']);
         }
 
-        $userId = $request->user()->id;
-        $assetIds = $assets->modelKeys();
-        $model = $generated['model'];
-
-        // First pass: top-level pages, so children can resolve their parent by slug.
-        $idBySlug = [];
-        $sortOrder = 10;
-
-        foreach ($generated['pages'] as $page) {
-            if ($page['parent_slug'] !== null) {
-                continue;
-            }
-
-            $suggestion = $this->upsertSuggestion($userId, null, $page, $assetIds, $model, $sortOrder);
-            $idBySlug[$page['slug']] = $suggestion->id;
-            $sortOrder += 10;
-        }
-
-        $homeId = $idBySlug['/'] ?? (reset($idBySlug) ?: null);
-
-        // Second pass: child pages attach to their named parent, falling back to home.
-        foreach ($generated['pages'] as $page) {
-            if ($page['parent_slug'] === null) {
-                continue;
-            }
-
-            $parentId = $idBySlug[$page['parent_slug']] ?? $homeId;
-            $this->upsertSuggestion($userId, $parentId, $page, $assetIds, $model, $sortOrder);
-            $sortOrder += 10;
-        }
+        $onboarding->update([
+            'site_layout_remote_id' => $remoteId,
+            'site_layout_status' => data_get($response, 'site_layout.status', 'queued'),
+            'site_layout_error' => null,
+        ]);
 
         return redirect()
             ->route('admin.page-suggestions.index')
-            ->with('status', 'Page suggestions generated from the reviewed uploads.');
+            ->with('status', 'Page suggestions are being generated from the reviewed uploads.');
     }
 
     public function feedback(Request $request, PageSuggestion $pageSuggestion): RedirectResponse
@@ -119,19 +119,26 @@ class PageSuggestionController extends AdminController
 
         $positive = $validated['feedback'] === 'yes';
 
+        $onboarding = $request->user()->onboardingState();
+        $reason = $positive ? null : $pageSuggestion->rejection_feedback;
+
+        abort_unless($onboarding->site_layout_remote_id, 409);
+
+        if (! $positive && blank($reason)) {
+            return back()->withErrors(['feedback' => 'Deny the page with an explanation before marking the suggestion unhelpful.']);
+        }
+
+        app(KeystoneApiService::class)->recordAiFeedback(
+            'site_layout_page',
+            $onboarding->site_layout_remote_id.':'.$pageSuggestion->slug,
+            $positive,
+            $reason,
+        );
+
         $pageSuggestion->update([
             'ai_feedback' => $positive,
             'ai_feedback_at' => now(),
         ]);
-
-        // A "No" on an AI-produced page is the human adequacy signal: strike the model for this task.
-        if (! $positive && $pageSuggestion->ai_model) {
-            app(OpenRouterService::class)->recordStrike(
-                $pageSuggestion->ai_task ?? PageSuggestion::TASK_SITEMAP,
-                $pageSuggestion->ai_model,
-                'Client marked page "' . $pageSuggestion->title . '" as not meeting expectations.',
-            );
-        }
 
         return back()->with('status', 'Thanks for the feedback.');
     }
@@ -210,6 +217,41 @@ class PageSuggestionController extends AdminController
 
                 return $suggestion;
             });
+    }
+
+    private function syncRemoteLayout(Request $request): void
+    {
+        $onboarding = $request->user()->onboardingState();
+
+        if (! $onboarding->site_layout_remote_id || in_array($onboarding->site_layout_status, ['completed', 'failed'], true)) {
+            return;
+        }
+
+        try {
+            $response = app(KeystoneApiService::class)->siteLayout($onboarding->site_layout_remote_id);
+            $layout = data_get($response, 'site_layout', []);
+            $onboarding->update([
+                'site_layout_status' => $layout['status'] ?? $onboarding->site_layout_status,
+                'site_layout_error' => data_get($layout, 'error.message'),
+            ]);
+
+            if (($layout['status'] ?? null) === 'completed' && is_array($layout['pages'] ?? null)) {
+                $sortOrder = 10;
+                foreach ($layout['pages'] as $page) {
+                    $slug = ($page['slug'] ?? '/') === '/' ? '/' : Str::slug((string) ($page['slug'] ?? $page['title'] ?? 'page'));
+                    $this->upsertSuggestion($request->user()->id, null, [
+                        'title' => (string) ($page['title'] ?? Str::headline($slug)),
+                        'slug' => $slug,
+                        'summary' => (string) ($page['goal'] ?? ''),
+                        'rationale' => (string) ($page['goal'] ?? ''),
+                        'sections' => array_values(array_map(static fn ($section): string => (string) ($section['type'] ?? $section['key'] ?? ''), (array) ($page['sections'] ?? []))),
+                    ], [], null, $sortOrder);
+                    $sortOrder += 10;
+                }
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function reviewForms(Collection $suggestions): array

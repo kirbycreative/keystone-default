@@ -4,7 +4,8 @@
             <li class="stepper__item" data-indicator="1"><span class="stepper__dot"><span class="stepper__num">1</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Connect domain</span></li>
             <li class="stepper__item" data-indicator="2"><span class="stepper__dot"><span class="stepper__num">2</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Company &amp; brand</span></li>
             <li class="stepper__item" data-indicator="3"><span class="stepper__dot"><span class="stepper__num">3</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Inspiration</span></li>
-            <li class="stepper__item" data-indicator="4"><span class="stepper__dot"><span class="stepper__num">4</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Launch</span></li>
+            <li class="stepper__item" data-indicator="4"><span class="stepper__dot"><span class="stepper__num">4</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Business materials</span></li>
+            <li class="stepper__item" data-indicator="5"><span class="stepper__dot"><span class="stepper__num">5</span><input-status class="stepper__status" fill></input-status></span><span class="stepper__label">Ready</span></li>
         </ol>
 
         {{-- Step 1: DNS --}}
@@ -101,16 +102,48 @@
             </form>
         </section>
 
-        {{-- Step 4: Launch --}}
-        <section class="panel panel--lg step hidden text:center" data-step="4">
-            <h2 class="margin:0">You're ready to go</h2>
+        {{-- Step 4: Business materials --}}
+        <section class="panel panel--lg step hidden" data-step="4">
+            <h2 class="margin:0">Add your business materials</h2>
+            <p class="lead margin:top:0o5">
+                Upload menus, promotions, advertisements, photos, documents, or other source material. We need these
+                files before we can generate the complete style guide and site layout.
+            </p>
+
+            <div id="onboarding-asset-dropzone" class="asset-dropzone margin:top:1">
+                <p class="muted margin:0">Drag &amp; drop files here, or click to choose.</p>
+                <input type="file" id="onboarding-asset-input" class="hidden" multiple
+                    accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.docx,.xls,.xlsx,.csv,.txt,.rtf">
+            </div>
+            <div id="onboarding-asset-list" class="asset-dropzone__list">
+                @foreach ($assets as $asset)
+                    <div class="asset-dropzone__item">
+                        <span>{{ $asset->original_filename }}</span>
+                        <span class="muted">{{ $asset->ingestion_status }}</span>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="margin:top:1">
+                <button type="button" class="btn btn--primary" id="materials-continue" @disabled($assets->isEmpty())>
+                    Save &amp; continue
+                </button>
+                <p class="muted font-size:0o8 margin:top:0o5 margin:bottom:0" id="materials-requirement" @if ($assets->isNotEmpty()) hidden @endif>
+                    Upload at least one file to continue.
+                </p>
+            </div>
+        </section>
+
+        {{-- Step 5: Submit complete brief --}}
+        <section class="panel panel--lg step hidden text:center" data-step="5">
+            <h2 class="margin:0">Your complete brief is ready</h2>
             <p class="lead margin:x:auto margin:top:0o5">
-                We've sent your brief to our studio and started building. Next, drop in your business materials so we can
-                tailor your content.
+                Your company details, inspiration, and business materials are ready. Submit the complete brief to begin
+                generating your style guide and site layout.
             </p>
             <form method="POST" action="{{ route('admin.onboarding.complete') }}" class="margin:top:1">
                 @csrf
-                <button type="submit" class="btn btn--primary">Let's go</button>
+                <button type="submit" class="btn btn--primary">Submit brief &amp; start building</button>
             </form>
         </section>
     </div>
@@ -301,6 +334,7 @@
                 const wrap = document.getElementById('suggested-sites');
                 try {
                     const res = await fetch(routes.suggestSites, { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) throw new Error('Suggestion request failed');
                     const data = await res.json();
                     if (!data.sites || !data.sites.length) {
                         wrap.innerHTML = '<p class="muted">No suggestions available right now.</p>';
@@ -316,7 +350,10 @@
                     wrap.querySelectorAll('[data-domain]').forEach(btn =>
                         btn.addEventListener('click', () => addInspiration(btn.dataset.domain)));
                 } catch (e) {
-                    wrap.innerHTML = '<p class="muted">Could not load suggestions.</p>';
+                    suggestionsLoaded = false;
+                    wrap.innerHTML = '<p class="muted">Could not load suggestions. ' +
+                        '<button type="button" class="btn btn--ghost btn--sm" id="retry-suggestions">Try again</button></p>';
+                    document.getElementById('retry-suggestions')?.addEventListener('click', loadSuggestedSites);
                 }
             }
 
@@ -343,6 +380,75 @@
                     alert('We could not save your inspiration sites. Please try again.');
                 } finally {
                     if (btn) { btn.disabled = false; btn.textContent = 'Save & continue'; }
+                }
+            });
+
+            // ---- Step 4: business materials ------------------------------------------
+            const assetZone = document.getElementById('onboarding-asset-dropzone');
+            const assetInput = document.getElementById('onboarding-asset-input');
+            const assetList = document.getElementById('onboarding-asset-list');
+            const materialsContinue = document.getElementById('materials-continue');
+            const materialsRequirement = document.getElementById('materials-requirement');
+            let assetCount = Number(cfg.assetCount || 0);
+
+            assetZone?.addEventListener('click', () => assetInput?.click());
+            ['dragover', 'dragenter'].forEach(eventName => assetZone?.addEventListener(eventName, event => {
+                event.preventDefault();
+                assetZone.classList.add('is-dragging');
+            }));
+            ['dragleave', 'drop'].forEach(eventName => assetZone?.addEventListener(eventName, event => {
+                event.preventDefault();
+                assetZone.classList.remove('is-dragging');
+            }));
+            assetZone?.addEventListener('drop', event => uploadMaterialFiles(event.dataTransfer.files));
+            assetInput?.addEventListener('change', () => uploadMaterialFiles(assetInput.files));
+
+            function uploadMaterialFiles(files) {
+                Array.from(files || []).forEach(uploadMaterialFile);
+            }
+
+            async function uploadMaterialFile(file) {
+                const row = document.createElement('div');
+                row.className = 'asset-dropzone__item';
+                row.innerHTML = '<span></span><span class="muted">Uploading\u2026</span>';
+                row.querySelector('span').textContent = file.name;
+                assetList.prepend(row);
+
+                const body = new FormData();
+                body.append('file', file);
+
+                try {
+                    const res = await fetch(routes.assetUpload, {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                        body,
+                    });
+                    if (!res.ok) throw new Error('Upload failed');
+                    const data = await res.json();
+                    row.querySelector('span:last-child').textContent = data.asset.status || 'Queued';
+                    assetCount += 1;
+                    materialsContinue.disabled = false;
+                    materialsRequirement.hidden = true;
+                } catch (error) {
+                    row.classList.add('is-error');
+                    row.querySelector('span:last-child').textContent = 'Failed';
+                }
+            }
+
+            materialsContinue?.addEventListener('click', async () => {
+                if (assetCount < 1) return;
+                materialsContinue.disabled = true;
+                try {
+                    const res = await fetch(routes.materials, {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                    });
+                    if (!res.ok) throw new Error('Save failed');
+                    showStep(5);
+                } catch (error) {
+                    alert('We could not confirm your business materials. Please try again.');
+                } finally {
+                    materialsContinue.disabled = false;
                 }
             });
 

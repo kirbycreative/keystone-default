@@ -1,107 +1,46 @@
+@php
+    $user = auth()->user();
+    $onboardingComplete = (bool) $user->onboarded;
+    $logoutForm = new \Keystone\Toolkit\Forms\Form();
+    $logoutForm->formInfo = false;
+    $logoutForm
+        ->setAction(route('logout'))
+        ->setAttributes(['class' => 'inline-flex'])
+        ->setSubmit('Log out', [
+            'class' => 'btn btn--ghost btn--sm',
+        ])
+        ->setSchema(['form' => []]);
+@endphp
+
 <header {{ $attributes }}>
     <div class="container">
-        <a href="{{ route('admin.dashboard') }}" class="logo">
-            <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 450 100">
-                <!-- Generator: Adobe Illustrator 29.0.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 192)  -->
-                <g>
-                    <path d="M111.3,28.1h6.8v21.2l19.3-21.2h9.2l-22.8,24.1,24.5,26.8h-9.6l-20.6-23.4v23.4h-6.8V28.1Z"
-                        style="fill: currentColor;" />
-                    <path d="M154.1,28.6h28.3v6.3h-21.6v14.1h19v6.7h-19v16.3h22.3v6.7h-29.1V28.6Z"
-                        style="fill: currentColor;" />
-                    <path d="M202.3,55.6l-14.2-27.9h8.1l9.6,19.6,9.4-19.6h7.4l-13.5,27.2v23.8h-6.8v-23Z"
-                        style="fill: currentColor;" />
-                    <path
-                        d="M247,39.4c-.1-2-.8-3.7-2.1-4.8s-3-1.7-5.1-1.7-3.8.6-5.2,1.9c-1.4,1.3-2.1,2.8-2.1,4.7s.6,3,1.8,4.3c1.2,1.3,3.3,2.7,6.5,4.4l2.7,1.4c4.1,2.2,7,4.4,8.7,6.7s2.5,5.1,2.5,8.4-1.4,7.7-4.3,10.2c-2.9,2.5-6.7,3.8-11.5,3.8s-7.9-1.3-10.3-3.8-3.7-6.1-3.9-10.9h7.4v.3c0,2.5.6,4.4,1.8,5.8,1.2,1.4,2.9,2.1,5.1,2.1s4.5-.7,6-2.1c1.6-1.4,2.3-3.2,2.3-5.4s-.5-3.4-1.6-4.7c-1.1-1.3-3.7-3-7.9-5.1l-3.4-1.7c-3.1-1.6-5.4-3.5-6.9-5.7-1.5-2.2-2.3-4.8-2.3-7.7s1.4-7.2,4.2-9.6c2.8-2.4,6.4-3.7,10.9-3.7s7.3,1.2,9.8,3.5c2.5,2.3,3.8,5.5,4.1,9.6h-7.3Z"
-                        style="fill: currentColor;" />
-                    <path d="M273.3,34.7h-12.6v-6.7h32v6.7h-12.6v43.9h-6.8v-43.9Z" style="fill: currentColor;" />
-                    <path
-                        d="M332.7,52.3c0,7.8-1.6,14.1-4.8,19-3.2,4.9-7.3,7.3-12.2,7.3s-9-2.4-12.2-7.3c-3.2-4.9-4.8-11.2-4.8-18.9s1.6-14.1,4.8-19c3.2-4.9,7.3-7.3,12.2-7.3s9,2.4,12.2,7.3c3.2,4.9,4.8,11.2,4.8,19ZM315.7,71.8c2.9,0,5.2-1.8,7-5.3,1.8-3.5,2.7-8.3,2.7-14.4s-.9-10.8-2.6-14.3-4.1-5.2-7.1-5.2-5.3,1.7-7,5.2c-1.7,3.5-2.6,8.3-2.6,14.4s.9,10.9,2.6,14.4c1.8,3.5,4.1,5.3,7,5.3Z"
-                        style="fill: currentColor;" />
-                    <path d="M338.9,27.6h8.2l17,38V27.6h6.5v50.9h-7.9l-17.3-38.4v38.4h-6.5V27.6Z"
-                        style="fill: currentColor;" />
-                    <path d="M377.4,27.7h28.3v6.3h-21.6v14.1h19v6.7h-19v16.3h22.3v6.7h-29.1V27.7Z"
-                        style="fill: currentColor;" />
-                </g>
-                <g>
-                    <rect x="19.4" y="45.2" width="21.7" height=".6"
-                        transform="translate(-21.7 28.5) rotate(-38.3)" style="fill: #309cd2;" />
-                    <rect x="29.3" y="47.8" width=".6" height="23.1"
-                        transform="translate(-35.4 46.4) rotate(-52.3)" style="fill: #c9e3f6;" />
-                    <polygon points="39.1 82.7 23.7 72.4 38.7 66.2 38.8 66.6 24.6 72.5 39.4 82.3 39.1 82.7"
-                        style="fill: #65cbe4;" />
-                    <path
-                        d="M76.3,86.3l-14.3-3.5v-30.9c0-.3-.6-2.1-2-4-2.1-2.7-5.1-4.1-9-4.3-3.8-.2-6.9,1.2-9.2,4.1-1.6,2-2.2,4.2-2.3,4.5v30.7l-13.6,3.4-9.7-55.2,17.1-12.6h0s16.9-8.2,16.9-8.2l19.2,8,16,12.6v.3s-9.2,55.1-9.2,55.1ZM17.3,31.6l9.4,53.5,11.8-2.9v-30.1h0c0-.2.6-2.6,2.4-5,1.7-2.2,4.8-4.8,10-4.6,5.2.3,8.2,2.7,9.7,4.8,1.7,2.2,2.2,4.3,2.2,4.4h0v30.3l12.5,3.1,9-53.7-15.4-12.2-18.7-7.8-16.5,8-16.6,12.2Z"
-                        style="fill: #65cbe4;" />
-                    <rect x="27.5" y="23.5" width=".6" height="23.1" transform="translate(-14.4 49.9) rotate(-71)"
-                        style="fill: #dae1e5;" />
-                    <polygon points="41.6 47 38.5 38.9 33.1 18.9 33.7 18.8 39 38.7 42.1 46.8 41.6 47"
-                        style="fill: #5792b7;" />
-                    <polygon points="50.5 25.9 33.6 19.1 33.7 18.8 50.5 25.6 68.9 18.7 69 19 50.5 25.9"
-                        style="fill: #65cbe4;" />
-                    <rect x="67" y="33.7" width="18.4" height=".7" transform="translate(-6.8 25.1) rotate(-17.9)"
-                        style="fill: #82d1df;" />
-                    <polygon points="66.6 38.1 50.4 26 50.7 25.5 66.2 37.1 68.7 20.1 69.2 20.2 66.6 38.1"
-                        style="fill: #a7deea;" />
-                    <rect x="74.1" y="35.9" width=".4" height="19.2"
-                        transform="translate(-10.3 66.5) rotate(-45.4)" style="fill: #d7eff3;" />
-                    <rect x="57.2" y="41.4" width="10.9" height=".3"
-                        transform="translate(-10.6 58.6) rotate(-46.7)" style="fill: #a7deea;" />
-                    <polygon
-                        points="63.1 82.7 62.8 82.3 77.6 72.5 62.3 66.5 80.2 52.8 80.6 53.2 63.5 66.3 78.8 72.4 63.1 82.7"
-                        style="fill: #a7deea;" />
-                    <circle cx="16.9" cy="31.3" r="2.2" style="fill: #f8fcfe;" />
-                    <circle cx="39.2" cy="82.5" r="1.9" style="fill: #65cbe4;" />
-                    <circle cx="51.1" cy="10.7" r="2.5" style="fill: #65cbe4;" />
-                    <circle cx="85" cy="31.3" r="2.5" style="fill: #ceecf2;" />
-                    <circle cx="68.9" cy="18.8" r="2.5" style="fill: #65cbe4;" />
-                    <circle cx="33.4" cy="18.8" r="2.5" style="fill: #4274b9;" />
-                    <circle cx="76" cy="86.1" r="2.5" style="fill: #4274b9;" />
-                    <circle cx="26.3" cy="85.7" r="2.5" style="fill: #4274b9;" />
-                    <circle cx="24.2" cy="72.4" r="2.2" style="fill: #44c7f4;" />
-                    <circle cx="66.4" cy="37.6" r="2.2" style="fill: #68acde;" />
-                    <circle cx="20.4" cy="52.3" r="2.2" style="fill: #65cbe4;" />
-                    <circle cx="81.1" cy="52.3" r="2.5" style="fill: #c9e3f6;" />
-                    <circle cx="78.2" cy="72.4" r="2.2" style="fill: #69a9dc;" />
-                    <circle cx="62.9" cy="82.5" r="2.2" style="fill: #c9e3f6;" />
-                    <circle cx="62.5" cy="51.8" r="1.9" style="fill: #c9e3f6;" />
-                    <circle cx="38.7" cy="38.8" r="1.9" style="fill: #c9e3f6;" />
-                    <circle cx="50.5" cy="25.7" r="2.1" style="fill: #c9e3f6;" />
-                    <circle cx="38.7" cy="66.4" r="1.9" style="fill: #c9e3f6;" />
-                    <circle cx="39.1" cy="52.2" r="1.9" style="fill: #4274b9;" />
-                </g>
-            </svg>
+        <a href="{{ route($onboardingComplete ? 'admin.dashboard' : 'admin.onboarding') }}" class="logo">
+            <img src="{{ Vite::asset('resources/images/logo/logo-long-2-lt.png') }}" height="50" alt="Logo">
         </a>
-        <nav class="w:100">
-            <ul class="flex:row gap:1">
-                <li><a href="{{ route('admin.dashboard') }}"
-                        class="{{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}">Dashboard</a></li>
-                <li><a href="{{ route('admin.content.index') }}"
-                        class="{{ request()->routeIs('admin.content.index') ? 'is-active' : '' }}">Content</a></li>
-                <li><a href="{{ route('admin.content.review') }}"
-                        class="{{ request()->routeIs('admin.content.review') ? 'is-active' : '' }}">Review</a></li>
-                <li><a href="{{ route('admin.page-suggestions.index') }}"
-                        class="{{ request()->routeIs('admin.page-suggestions.*') ? 'is-active' : '' }}">Page
-                        Suggestions</a></li>
-                <li><a href="{{ route('admin.templates.index') }}"
-                        class="{{ request()->routeIs('admin.templates.*') ? 'is-active' : '' }}">Templates</a></li>
-            </ul>
-        </nav>
+        @if ($onboardingComplete)
+            <nav class="w:100">
+                <ul class="flex:row gap:1">
+                    <li><a href="{{ route('admin.dashboard') }}"
+                            class="{{ request()->routeIs('admin.dashboard') ? 'is-active' : '' }}">Dashboard</a></li>
+                    @if ($user->onboardingState()->contentUnlocked())
+                        <li><a href="{{ route('admin.content.index') }}"
+                                class="{{ request()->routeIs('admin.content.index') ? 'is-active' : '' }}">Content</a></li>
+                        <li><a href="{{ route('admin.content.review') }}"
+                                class="{{ request()->routeIs('admin.content.review') ? 'is-active' : '' }}">Review</a></li>
+                    @endif
+                    <li><a href="{{ route('admin.page-suggestions.index') }}"
+                            class="{{ request()->routeIs('admin.page-suggestions.*') ? 'is-active' : '' }}">Page
+                            Suggestions</a></li>
+                    <li><a href="{{ route('admin.templates.index') }}"
+                            class="{{ request()->routeIs('admin.templates.*') ? 'is-active' : '' }}">Templates</a></li>
+                </ul>
+            </nav>
+        @endif
         <div id="current-user" class="flex:row align:center gap:1">
             <div>
                 <p class="signed-in text:nowrap">Signed in as</p>
-                <p class="text:nowrap fw-600">{{ auth()->user()->name }}</p>
+                <p class="text:nowrap fw-600">{{ $user->name }}</p>
             </div>
-
-            @php
-                $logoutForm = new \Keystone\Toolkit\Forms\Form();
-                $logoutForm
-                    ->setAction(route('logout'))
-                    ->setAttributes(['class' => 'inline-flex'])
-                    ->setSubmit('Log out', [
-                        'class' => 'btn btn--ghost btn--sm',
-                    ])
-                    ->setSchema(['form' => []]);
-            @endphp
             {!! $logoutForm->build() !!}
         </div>
     </div>

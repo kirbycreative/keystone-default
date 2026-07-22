@@ -1,17 +1,17 @@
 @php($logoUrl = $logoUrl ?? (isset($onboarding) ? $onboarding->logoUrl() : null))
+<h3>Current Colors</h3>
 <div class="field flex:row gap:2 columns:2" data-logo-field>
     <div class="column w:50">
         <input-image name="{{ $name ?? 'logo' }}" aspect="1.5" button-label="Choose Logo" class="w:100"></input-image>
     </div>
     <div class="column w:50">
-        <h3>Color Guide</h3>
         <div id="primary-colors" class="color-swatches">
         </div>
-        <h4>Primary Color:</h4>
-        <input-color name="primary_color" value="{{ $primaryColor ?? '' }}" formats="hex,rgba"
+        <h4 style="margin-top: 0;">Primary Color:</h4>
+        <input-color name="primary_color" value="{{ $primaryColor ?? '' }}" formats="hex,rgba" layout="horizontal"
             show-requirement="false"></input-color>
         <h4>Secondary Color:</h4>
-        <input-color name="secondary_color" value="{{ $secondaryColor ?? '' }}" formats="hex,rgba"
+        <input-color name="secondary_color" value="{{ $secondaryColor ?? '' }}" formats="hex,rgba" layout="horizontal"
             show-requirement="false"></input-color>
     </div>
 </div>
@@ -21,7 +21,7 @@
         const field = document.currentScript.previousElementSibling;
         const imageInput = field?.querySelector('input-image');
         const colorsPanel = field?.querySelector('#primary-colors');
-        const maxSwatches = 12;
+        const maxSwatches = 8;
         let activeSampler = null;
 
         if (!imageInput || !colorsPanel) return;
@@ -332,32 +332,44 @@
 
             swatch.innerHTML = `
                 <div class="color" style="background-color: ${hex};"></div>
-                <span class="color-remove" title="Remove Color" onclick="this.closest('.color-swatch').remove()">&times;</span>
+                <button class="color-remove" type="button" title="Remove Color" aria-label="Remove color">&times;</button>
                 <span class="color-hex">${hex}</span>
         `;
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'primary_colors[]';
+            hiddenInput.value = hex;
+            swatch.appendChild(hiddenInput);
+
+            swatch.querySelector('.color-remove').addEventListener('click', event => {
+                event.stopPropagation();
+                swatch.remove();
+            });
             swatch.addEventListener('click', () => {
                 if (active) return;
                 const colorInput = document.createElement('input-color');
                 colorInput.setAttribute('name', 'primary_colors[]');
                 colorInput.setAttribute('value', hex);
                 colorInput.setAttribute('formats', 'hex,rgba');
+                colorInput.setAttribute('layout', 'horizontal');
                 colorInput.setAttribute('show-requirement', 'false');
                 colorInput.addEventListener('input', () => {
                     swatch.querySelector('.color-hex').textContent = colorInput.value;
                     swatch.querySelector('.color').style.backgroundColor = colorInput.value;
                 });
+                hiddenInput.remove();
                 swatch.appendChild(colorInput);
-                // startEyedropperSampler(colorInput);
                 active = true;
             });
-            // swatch.querySelector('.color-remove').addEventListener('click', () => swatch.remove());
             return swatch;
         }
 
         function renderSwatches(colors) {
             colorsPanel.innerHTML = '';
-            colors.forEach(color => colorsPanel.appendChild(makeSwatch(color)));
+            colors.slice(0, maxSwatches).forEach(color => colorsPanel.appendChild(makeSwatch(color)));
         }
+
+        renderSwatches(@json($colors ?? []));
 
         imageInput.addEventListener('image-load', () => {
             const imageData = imageInput.getImageData();

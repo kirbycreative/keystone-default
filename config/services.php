@@ -37,7 +37,8 @@ return [
 
     // Kirby Creative API — the client pulls templates from KC's proprietary catalog through this
     // authenticated API (the client never holds S3 catalog credentials). The token is minted by KC
-    // at provisioning and written into this site's .env. Read via config so it survives config:cache.
+    // at provisioning and written into this site's .env. Every request also sends APP_URL as the
+    // site selector so one KC user can safely own multiple sites.
     'keystone' => [
         'url' => env('KEYSTONE_API_URL'),
         'token' => env('KEYSTONE_API_TOKEN'),

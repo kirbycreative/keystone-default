@@ -25,6 +25,10 @@ class ContentAsset extends AppModel
         'size' => ['fillable' => true, 'type' => 'integer', 'form' => false],
         'ingestion_status' => ['fillable' => true, 'type' => 'string', 'form' => false],
         'ingestion_result' => ['fillable' => true, 'cast' => 'array', 'form' => false],
+        'remote_id' => ['fillable' => true, 'type' => 'string', 'form' => false],
+        'remote_request_id' => ['fillable' => true, 'type' => 'string', 'form' => false],
+        'remote_status' => ['fillable' => true, 'type' => 'string', 'form' => false],
+        'remote_error' => ['fillable' => true, 'type' => 'string', 'form' => false],
     ];
 
     public function user(): BelongsTo

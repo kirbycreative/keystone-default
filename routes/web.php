@@ -5,12 +5,18 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Admin\PageSuggestionController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\TemplateViewerController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('admin.dashboard')
+        : view('welcome');
+})->name('home');
+
 Route::get('/health', function () {
     DB::select('select 1');
     Storage::disk(config('filesystems.default'))->put('.healthcheck', now()->toIso8601String());
@@ -22,10 +28,10 @@ Route::get('/health', function () {
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
-    Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'request'])->name('password.request');
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])->name('password.email');
-    Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])->name('password.reset');
-    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])->name('password.update');
+    Route::get('/forgot-password', [PasswordResetController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'email'])->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'reset'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])
@@ -38,15 +44,22 @@ Route::middleware(['auth', 'onboarded'])->prefix('admin')->name('admin.')->group
     Route::post('/onboarding/brand', [OnboardingController::class, 'saveBrand'])->name('onboarding.brand');
     Route::get('/onboarding/suggest-sites', [OnboardingController::class, 'suggestSites'])->name('onboarding.suggest-sites');
     Route::post('/onboarding/inspiration', [OnboardingController::class, 'saveInspiration'])->name('onboarding.inspiration');
+    Route::post('/onboarding/assets', [ContentAssetController::class, 'dropUpload'])->name('onboarding.assets');
+    Route::post('/onboarding/materials', [OnboardingController::class, 'saveMaterials'])->name('onboarding.materials');
     Route::post('/onboarding', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+    Route::post('/onboarding/style-guide-decision', [OnboardingController::class, 'styleGuideDecision'])->name('onboarding.style-guide-decision');
+    Route::post('/onboarding/page-tree-decision', [OnboardingController::class, 'pageTreeDecision'])->name('onboarding.page-tree-decision');
 
     Route::get('/', DashboardController::class)->name('dashboard');
-    Route::get('/content', [ContentAssetController::class, 'index'])->name('content.index');
-    Route::post('/content', [ContentAssetController::class, 'store'])->name('content.store');
-    Route::post('/content/drop', [ContentAssetController::class, 'dropUpload'])->name('content.drop');
-    Route::get('/content/review', [ContentAssetController::class, 'review'])->name('content.review');
-    Route::get('/content/{contentAsset}/download', [ContentAssetController::class, 'download'])
-        ->name('content.download');
+    Route::get('/build-status', [DashboardController::class, 'status'])->name('build-status');
+    Route::middleware('page-tree-approved')->group(function (): void {
+        Route::get('/content', [ContentAssetController::class, 'index'])->name('content.index');
+        Route::post('/content', [ContentAssetController::class, 'store'])->name('content.store');
+        Route::post('/content/drop', [ContentAssetController::class, 'dropUpload'])->name('content.drop');
+        Route::get('/content/review', [ContentAssetController::class, 'review'])->name('content.review');
+        Route::get('/content/{contentAsset}/download', [ContentAssetController::class, 'download'])
+            ->name('content.download');
+    });
     Route::get('/page-suggestions', [PageSuggestionController::class, 'index'])->name('page-suggestions.index');
     Route::post('/page-suggestions/generate', [PageSuggestionController::class, 'generate'])->name('page-suggestions.generate');
     Route::patch('/page-suggestions/{pageSuggestion}/status', [PageSuggestionController::class, 'updateStatus'])

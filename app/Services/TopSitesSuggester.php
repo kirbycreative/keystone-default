@@ -2,55 +2,30 @@
 
 namespace App\Services;
 
-use Keystone\Toolkit\Services\OpenRouterService;
-use Throwable;
+use Keystone\Toolkit\Services\KeystoneApiService;
 
 /**
  * Suggests well-known, high-performing websites for a business category and region so the client
- * has inspiration references even when they don't have their own in mind. Backed by OpenRouter.
+ * has inspiration references even when they don't have their own in mind. The AI action and its
+ * provider credentials are owned by the Kirby Creative API.
  */
 class TopSitesSuggester
 {
     public const TASK = 'top_sites';
 
-    public function __construct(private OpenRouterService $openRouter)
-    {
-    }
+    public function __construct(private KeystoneApiService $keystoneApi) {}
 
     /**
      * @return array<int, array{name: string, domain: string, reason: string}>
      */
     public function suggest(string $category, string $region, string $scope, int $limit = 5): array
     {
-        $scopeLabel = $scope === 'national' ? 'countrywide' : 'regional/local';
-
-        try {
-            $result = $this->openRouter->request([
-                'task' => self::TASK,
-                'response_type' => 'json_object',
-                'temperature' => 0.4,
-                'directives' => 'You are a competitive web research assistant. You recommend real, well-known, '
-                    .'high-performing business websites worth studying for design and conversion. Return valid JSON only.',
-                'prompt' => implode("\n", [
-                    "Business category: {$category}",
-                    "Location: {$region}",
-                    "Audience reach: {$scopeLabel}",
-                    '',
-                    "List the top {$limit} real, currently-operating websites in this category that are known to "
-                        .'be top earners or category leaders for this audience reach. Prefer recognizable brands.',
-                    'Return JSON with this exact shape:',
-                    '{"sites":[{"name":string,"domain":string,"reason":string}]}',
-                    '- domain is the bare hostname (e.g. "example.com"), no protocol or path.',
-                    '- reason is one short sentence on why it is worth studying.',
-                ]),
-            ], static fn ($response): bool => is_array($response)
-                && isset($response['sites'])
-                && is_array($response['sites'])
-                && $response['sites'] !== []
-            );
-        } catch (Throwable) {
-            return [];
-        }
+        $result = $this->keystoneApi->runAiAction(self::TASK, [
+            'business_category' => $category,
+            'primary_location' => $region,
+            'audience_reach' => $scope,
+            'limit' => $limit,
+        ]);
 
         return $this->normalize($result['sites'] ?? [], $limit);
     }

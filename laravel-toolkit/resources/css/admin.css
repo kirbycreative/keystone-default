@@ -37,7 +37,7 @@ header.layout-component .container{
     align-items: center;
     justify-content: space-between;
     padding: 0 1rem;
-    height: 50px;
+    height: 100%;
 }
 
 body{
@@ -140,10 +140,7 @@ body{
 }
 
 header.layout-component{
-    
     .container{
-        padding:1rem;
-
         a.logo{
             display:block;
             width: 300px;

@@ -1,0 +1,128 @@
+name: Publish release image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-client-image-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 981450247477.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: keystone-client
+  PUBLISH_ROLE_ARN: arn:aws:iam::981450247477:role/GitHubActionsKeystoneClientEcrPublisher
+
+jobs:
+  publish:
+    name: Build and publish immutable image
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Resolve release tag
+        id: release
+        env:
+          PUSH_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          release_tag="$PUSH_TAG"
+
+          if [[ ! "$release_tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Release tag must match vMAJOR.MINOR.PATCH; received: $release_tag"
+            exit 1
+          fi
+
+          echo "tag=$release_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Verify immutable source
+        id: source
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          head_sha="$(git rev-parse HEAD)"
+          tag_sha="$(git rev-list -n 1 "${RELEASE_TAG}^{commit}")"
+
+          if [[ "$head_sha" != "$tag_sha" ]]; then
+            echo "::error::Checked-out commit $head_sha does not match $RELEASE_TAG at $tag_sha"
+            exit 1
+          fi
+
+          if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+            echo "::error::Release checkout contains tracked modifications"
+            git status --short
+            exit 1
+          fi
+
+          echo "sha=$head_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Configure short-lived AWS credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          role-to-assume: ${{ env.PUBLISH_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sign in to private ECR
+        uses: aws-actions/amazon-ecr-login@b040164c4934333d597f3f9c67502ff28f814e9c # v2.1.6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build and publish release
+        id: image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.release.outputs.tag }}
+          labels: |
+            org.opencontainers.image.source=git@github.com:kirbycreative/keystone-default.git
+            org.opencontainers.image.version=${{ steps.release.outputs.tag }}
+            org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
+          provenance: mode=max
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Record immutable release mapping
+        env:
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          set -euo pipefail
+
+          image="${ECR_REGISTRY}/${ECR_REPOSITORY}@${IMAGE_DIGEST}"
+          release="git@github.com:kirbycreative/keystone-default.git@${RELEASE_TAG}"
+
+          {
+            echo "## Published Keystone Client release"
+            echo
+            echo "- Source commit: \`${SOURCE_SHA}\`"
+            echo "- Release: \`${release}\`"
+            echo "- Image: \`${image}\`"
+            echo
+            echo "\`KEYSTONE_CLIENT_RELEASES\` entry:"
+            echo
+            echo '```json'
+            printf '{"%s":"%s"}\n' "$release" "$image"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

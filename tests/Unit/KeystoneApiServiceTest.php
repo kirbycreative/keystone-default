@@ -27,14 +27,17 @@ class KeystoneApiServiceTest extends TestCase
         $api->createSiteLayout(['request_id' => 'request-2'], 'request-2');
         $api->siteLayout('layout-1');
         $api->recordAiFeedback('site_layout_page', 'layout-1:home', true);
+        $api->sendPasswordReset('owner@example.com', 'https://client.example/reset-password/token');
 
-        Http::assertSentCount(8);
+        Http::assertSentCount(9);
         Http::assertSent(fn (Request $request): bool => $request->hasHeader('Authorization', 'Bearer secret')
             && $request->hasHeader('X-Keystone-Site-Url', 'https://Client.Example'));
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/onboarding/completions'
             && $request->hasHeader('Idempotency-Key', 'request-1'));
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/site-layouts'
             && $request->hasHeader('Idempotency-Key', 'request-2'));
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/client-mail/password-reset'
+            && $request['email'] === 'owner@example.com');
     }
 
     public function test_asset_upload_is_multipart_and_uses_the_same_authentication_contract(): void

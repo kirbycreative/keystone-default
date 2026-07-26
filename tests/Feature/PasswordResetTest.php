@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
@@ -14,21 +14,27 @@ class PasswordResetTest extends TestCase
 
     public function test_account_owner_can_request_and_use_a_single_use_password_link(): void
     {
-        Notification::fake();
+        Http::fake(['*' => Http::response(['sent' => true])]);
         $user = User::factory()->create();
 
         $this->post(route('password.email'), ['email' => $user->email])->assertSessionHas('status');
 
-        Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $notification) use ($user): bool {
-            $this->post(route('password.update'), [
-                'token' => $notification->token,
-                'email' => $user->email,
-                'password' => 'new-secure-password',
-                'password_confirmation' => 'new-secure-password',
-            ])->assertRedirect(route('login'));
+        $resetUrl = null;
+        Http::assertSent(function (Request $request) use (&$resetUrl, $user): bool {
+            $resetUrl = $request->data()['reset_url'] ?? null;
 
-            return true;
+            return $request->url() === 'https://kirbycreative.co/api/client-mail/password-reset'
+                && $request->data()['email'] === $user->email
+                && is_string($resetUrl);
         });
+
+        $token = basename((string) parse_url($resetUrl, PHP_URL_PATH));
+        $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'new-secure-password',
+            'password_confirmation' => 'new-secure-password',
+        ])->assertRedirect(route('login'));
 
         $this->assertCredentials(['email' => $user->email, 'password' => 'new-secure-password']);
     }

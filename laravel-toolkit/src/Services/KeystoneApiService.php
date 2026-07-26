@@ -99,6 +99,14 @@ class KeystoneApiService
         ]);
     }
 
+    public function sendPasswordReset(string $email, string $resetUrl): void
+    {
+        $this->post('/client-mail/password-reset', [
+            'email' => $email,
+            'reset_url' => $resetUrl,
+        ]);
+    }
+
     /**
      * Run an AI action owned and configured by the Kirby Creative API.
      *

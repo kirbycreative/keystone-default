@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Keystone\Toolkit\Traits\HasClientAssets;
+use Keystone\Toolkit\Services\KeystoneApiService;
 
 class User extends Authenticatable
 {
@@ -74,4 +75,16 @@ class User extends Authenticatable
     {
         return $this->onboarding()->firstOrCreate([], ['step' => Onboarding::STEP_DNS]);
     }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        app(KeystoneApiService::class)->sendPasswordReset(
+            $this->getEmailForPasswordReset(),
+            route('password.reset', [
+                'token' => $token,
+                'email' => $this->getEmailForPasswordReset(),
+            ]),
+        );
+    }
+
 }

@@ -7,21 +7,27 @@ use Keystone\Toolkit\Models\AppModel;
 
 class Form
 {
-
     protected $method = 'POST';
+
     protected $actionRoute = '';
+
     protected $action = '';
+
     protected $data = [];
+
     protected $model = null;
+
     protected $schema = null;
+
     protected $attributes = [];
+
     protected $submit = ['value' => 'Submit'];
 
     public $formInfo = true;
 
     public function __construct($data = [])
     {
-        if (!empty($this->actionRoute)) {
+        if (! empty($this->actionRoute)) {
             $this->setActionRoute($this->actionRoute);
         }
 
@@ -31,6 +37,7 @@ class Form
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -38,18 +45,21 @@ class Form
     {
         $this->actionRoute = $actionRoute;
         $this->action = route($actionRoute);
+
         return $this;
     }
 
     public function setMethod($method)
     {
         $this->method = strtoupper($method);
+
         return $this;
     }
 
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
@@ -63,22 +73,24 @@ class Form
         return $this;
     }
 
-
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 
     public function setSchema($schema)
     {
         $this->schema = $schema;
+
         return $this;
     }
 
@@ -87,7 +99,7 @@ class Form
     public function fields()
     {
         if (empty($this->schema)) {
-            if (!empty($this->model)) {
+            if (! empty($this->model)) {
                 if ($this->model::hasSchema()) {
                     $this->schema = $this->model::getSchema();
                 }
@@ -120,7 +132,7 @@ class Form
 
         $fields = $this->fields();
 
-        //dd($fields);
+        // dd($fields);
 
         $rendered = [];
         $types = Arr::pluck($fields, 'type');
@@ -136,7 +148,7 @@ class Form
             $attributes['enctype'] = 'multipart/form-data';
         }
 
-        $open = '<form ' . $this->renderAttributes($attributes) . '>';
+        $open = '<form '.$this->renderAttributes($attributes).'>';
         array_push($rendered, $open);
 
         array_push($rendered, csrf_field());
@@ -146,9 +158,9 @@ class Form
         }
 
         $formId = $attributes['id'] ?? null;
-        $formInfoFor = $formId ? ' for="' . e($formId) . '"' : '';
+        $formInfoFor = $formId ? ' for="'.e($formId).'"' : '';
         if ($this->formInfo) {
-            array_push($rendered, '<form-info' . $formInfoFor . '></form-info>');
+            array_push($rendered, '<form-info'.$formInfoFor.'></form-info>');
         }
 
         $propertyRules = $this->modelRulesByField();
@@ -211,14 +223,15 @@ class Form
         $submit = view('toolkit::form.submit', $this->submit())->render();
         array_push($rendered, $submit);
         array_push($rendered, '</form>');
+
         return Arr::join($rendered, "\n");
     }
 
     protected function renderAttributes(array $attributes): string
     {
         return collect($attributes)
-            ->filter(fn($value) => $value !== null && $value !== false)
-            ->map(fn($value, $key) => $value === true ? e($key) : e($key) . '="' . e($value) . '"')
+            ->filter(fn ($value) => $value !== null && $value !== false)
+            ->map(fn ($value, $key) => $value === true ? e($key) : e($key).'="'.e($value).'"')
             ->implode(' ');
     }
 

@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class DateTime extends Property
 {
     public $type = 'datetime';
@@ -26,20 +23,17 @@ class DateTime extends Property
             'align' => 'center',
             'format' => function ($value, $instance = null) {
                 return date('Y-m-d', strtotime($value));
-            }
+            },
         ];
     }
-
 
     public function form()
     {
         return [
             'type' => 'date',
-            'cast' => 'Y-m-d'
+            'cast' => 'Y-m-d',
         ];
     }
-
-
 
     /*
     public function accessor(string $value): string

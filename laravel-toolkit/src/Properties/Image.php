@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Image extends Property
 {
     public $type = 'image';
@@ -12,7 +9,6 @@ class Image extends Property
     public $fillable = true;
 
     public $label = 'Image';
-
 
     public $rules = [
         'type' => 'string',
@@ -23,8 +19,8 @@ class Image extends Property
     {
         return [
             'accessor' => function ($value) {
-                return '<img width="100" src="' . $value . '" />';
-            }
+                return '<img width="100" src="'.$value.'" />';
+            },
         ];
     }
 

@@ -8,11 +8,11 @@ use App\Models\PageSuggestion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Keystone\Toolkit\Forms\Form;
 use Keystone\Toolkit\Services\KeystoneApiService;
 use RuntimeException;
-use Illuminate\Support\Str;
 
 class PageSuggestionController extends AdminController
 {
@@ -54,7 +54,7 @@ class PageSuggestionController extends AdminController
             ->where('user_id', $request->user()->id)
             ->when(
                 isset($validated['asset_ids']),
-                fn($query) => $query->whereIn('id', $validated['asset_ids'])
+                fn ($query) => $query->whereIn('id', $validated['asset_ids'])
             )
             ->get();
 
@@ -95,7 +95,7 @@ class PageSuggestionController extends AdminController
 
             return redirect()
                 ->route('admin.content.review')
-                ->withErrors(['asset_ids' => 'AI site map generation failed. Please try again. (' . $exception->getMessage() . ')']);
+                ->withErrors(['asset_ids' => 'AI site map generation failed. Please try again. ('.$exception->getMessage().')']);
         }
 
         $onboarding->update([
@@ -148,7 +148,7 @@ class PageSuggestionController extends AdminController
         abort_unless($pageSuggestion->user_id === $request->user()->id, 404);
 
         $validated = $request->validate([
-            'status' => ['required', 'string', 'in:' . implode(',', [
+            'status' => ['required', 'string', 'in:'.implode(',', [
                 PageSuggestion::STATUS_APPROVED,
                 PageSuggestion::STATUS_REJECTED,
             ])],
@@ -257,7 +257,7 @@ class PageSuggestionController extends AdminController
     private function reviewForms(Collection $suggestions): array
     {
         return $suggestions
-            ->mapWithKeys(fn(PageSuggestion $suggestion): array => [
+            ->mapWithKeys(fn (PageSuggestion $suggestion): array => [
                 $suggestion->id => [
                     'approve' => $this->statusForm($suggestion, PageSuggestion::STATUS_APPROVED),
                     'reject' => $this->statusForm($suggestion, PageSuggestion::STATUS_REJECTED),
@@ -286,7 +286,7 @@ class PageSuggestionController extends AdminController
             ];
         }
 
-        return (new Form())
+        return (new Form)
             ->setAction(route('admin.page-suggestions.status', $suggestion))
             ->setMethod('PATCH')
             ->setAttributes(['class' => $isRejection ? 'margin:top:1 flex:column gap:1' : ''])

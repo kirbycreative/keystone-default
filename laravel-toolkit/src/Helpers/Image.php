@@ -63,13 +63,11 @@ class Image
     /**
      * Creates an image object from a path
      *
-     * @param string $path
-     * @param int    $width
-     * @param int    $height
-     *
+     * @param  int  $width
+     * @param  int  $height
      * @return static
      */
-    static public function fromPath(string $path, $width = null, $height = null)
+    public static function fromPath(string $path, $width = null, $height = null)
     {
         return new self($path, $width, $height);
     }
@@ -77,13 +75,12 @@ class Image
     /**
      * Constructor
      *
-     * @param string $source
-     * @param int    $width
-     * @param int    $height
+     * @param  int  $width
+     * @param  int  $height
      */
-    public function __construct(string $source = null, $width = null, $height = null)
+    public function __construct(?string $source = null, $width = null, $height = null)
     {
-        if (!empty($source)) {
+        if (! empty($source)) {
             if (is_string($source)) {
                 $this->path = $source;
                 $this->source = $this->loadImage($this->path);
@@ -95,7 +92,7 @@ class Image
     /**
      * Load image based on its MIME type.
      *
-     * @param string $path
+     * @param  string  $path
      * @return resource
      */
     private function loadImage($path)
@@ -118,14 +115,14 @@ class Image
     /**
      * Sets the source image and its dimensions
      *
-     * @param resource $source
-     * @param int      $width
-     * @param int      $height
+     * @param  resource  $source
+     * @param  int  $width
+     * @param  int  $height
      */
     private function setSource($source, $width = null, $height = null)
     {
-        $this->width = !empty($width) ? $width : imagesx($source);
-        $this->height = !empty($height) ? $height : imagesy($source);
+        $this->width = ! empty($width) ? $width : imagesx($source);
+        $this->height = ! empty($height) ? $height : imagesy($source);
         $this->aspect = $this->width / $this->height;
 
         $this->originalWidth = $this->width;
@@ -135,8 +132,7 @@ class Image
     /**
      * Scales the image by a given factor
      *
-     * @param float $factor
-     *
+     * @param  float  $factor
      * @return static
      */
     public function scale($factor)
@@ -146,15 +142,15 @@ class Image
         $newImage = imagecreatetruecolor($this->width, $this->height);
         imagecopyresampled($newImage, $this->source, 0, 0, 0, 0, $this->width, $this->height, $this->originalWidth, $this->originalHeight);
         $this->source = $newImage;
+
         return $this;
     }
 
     /**
      * Resizes the image to a given width and height
      *
-     * @param int $width
-     * @param int $height
-     *
+     * @param  int  $width
+     * @param  int  $height
      * @return static
      */
     public function resize($width, $height)
@@ -182,6 +178,7 @@ class Image
         }
         imagecopyresampled($newImage, $this->source, 0, 0, 0, 0, $this->width, $this->height, $this->originalWidth, $this->originalHeight);
         $this->source = $newImage;
+
         return $this;
     }
 
@@ -194,19 +191,21 @@ class Image
     {
         $this->width = $this->originalWidth;
         $this->height = $this->originalHeight;
+
         return $this;
     }
 
     /**
      * Writes the image to a file
      *
-     * @param string $path
-     *
+     * @param  string  $path
      * @return static
      */
     public function write($path = null)
     {
-        if (empty($path)) $path = $this->path;
+        if (empty($path)) {
+            $path = $this->path;
+        }
 
         switch ($this->mimetype) {
             case 'image/jpeg':
@@ -221,6 +220,7 @@ class Image
             default:
                 throw new \Exception("Unsupported image format for saving: {$this->mimetype}");
         }
+
         return $this;
     }
 

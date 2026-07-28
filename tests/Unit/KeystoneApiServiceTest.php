@@ -26,16 +26,34 @@ class KeystoneApiServiceTest extends TestCase
         $api->asset('asset-1');
         $api->createSiteLayout(['request_id' => 'request-2'], 'request-2');
         $api->siteLayout('layout-1');
+        $api->siteSchemaDraft();
+        $api->siteSchemaPublished();
+        $api->siteUsage();
+        $api->siteSchemaVersions();
+        $api->updateSiteSchema('identity.update', ['name' => 'Northstar'], str_repeat('a', 64), 'schema-request-1');
+        $api->publishSiteSchema(str_repeat('b', 64), 'Initial publication', 'schema-publish-1');
+        $api->rollbackSiteSchema('01VERSION', 'schema-rollback-1');
         $api->recordAiFeedback('site_layout_page', 'layout-1:home', true);
         $api->sendPasswordReset('owner@example.com', 'https://client.example/reset-password/token');
 
-        Http::assertSentCount(9);
+        Http::assertSentCount(16);
         Http::assertSent(fn (Request $request): bool => $request->hasHeader('Authorization', 'Bearer secret')
             && $request->hasHeader('X-Keystone-Site-Url', 'https://Client.Example'));
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/onboarding/completions'
             && $request->hasHeader('Idempotency-Key', 'request-1'));
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/site-layouts'
             && $request->hasHeader('Idempotency-Key', 'request-2'));
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/site-schema/commands'
+            && $request->hasHeader('If-Match', str_repeat('a', 64))
+            && $request->hasHeader('Idempotency-Key', 'schema-request-1')
+            && $request['command'] === 'identity.update'
+            && $request['payload'] === ['name' => 'Northstar']);
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/site-schema/publish'
+            && $request->hasHeader('If-Match', str_repeat('b', 64))
+            && $request->hasHeader('Idempotency-Key', 'schema-publish-1')
+            && $request['change_summary'] === 'Initial publication');
+        Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/site-schema/versions/01VERSION/rollback'
+            && $request->hasHeader('Idempotency-Key', 'schema-rollback-1'));
         Http::assertSent(fn (Request $request): bool => $request->url() === 'https://kirbycreative.co/api/client-mail/password-reset'
             && $request['email'] === 'owner@example.com');
     }

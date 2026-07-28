@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class TemplateViewerController extends Controller
 {
     private array $templatePaths = [
-        'resources/views/components/sections' => 'App Views'
+        'resources/views/components/sections' => 'App Views',
     ];
 
     public function index(Request $request)
@@ -21,7 +21,7 @@ class TemplateViewerController extends Controller
         // Filter by category if requested
         $category = $request->get('category');
         if ($category) {
-            $templates = array_filter($templates, fn($t) => $t['category'] === $category);
+            $templates = array_filter($templates, fn ($t) => $t['category'] === $category);
         }
 
         // Search if requested
@@ -29,8 +29,7 @@ class TemplateViewerController extends Controller
         if ($search) {
             $templates = array_filter(
                 $templates,
-                fn($t) =>
-                stripos($t['name'], $search) !== false ||
+                fn ($t) => stripos($t['name'], $search) !== false ||
                     stripos($t['path'], $search) !== false ||
                     stripos($t['content'] ?? '', $search) !== false
             );
@@ -49,7 +48,7 @@ class TemplateViewerController extends Controller
         $fullPath = base64_decode($path);
 
         // Security: ensure path is within allowed directories
-        $allowedPaths = array_map(fn($p) => base_path($p), array_keys($this->templatePaths));
+        $allowedPaths = array_map(fn ($p) => base_path($p), array_keys($this->templatePaths));
         $realFullPath = realpath($fullPath);
 
         $allowed = false;
@@ -61,12 +60,12 @@ class TemplateViewerController extends Controller
             }
         }
 
-        if (!$allowed || !$realFullPath || !File::exists($realFullPath)) {
+        if (! $allowed || ! $realFullPath || ! File::exists($realFullPath)) {
             abort(404, 'Template not found or access denied');
         }
 
         $content = File::get($realFullPath);
-        $relativePath = Str::after($realFullPath, base_path() . DIRECTORY_SEPARATOR);
+        $relativePath = Str::after($realFullPath, base_path().DIRECTORY_SEPARATOR);
         $name = basename($realFullPath);
 
         // Determine category
@@ -88,18 +87,18 @@ class TemplateViewerController extends Controller
         foreach ($this->templatePaths as $basePath => $category) {
             $fullBasePath = base_path($basePath);
 
-            if (!File::exists($fullBasePath)) {
+            if (! File::exists($fullBasePath)) {
                 continue;
             }
 
             $files = File::allFiles($fullBasePath);
 
             foreach ($files as $file) {
-                if (!str_ends_with($file->getFilename(), '.blade.php')) {
+                if (! str_ends_with($file->getFilename(), '.blade.php')) {
                     continue;
                 }
 
-                $relativePath = Str::after($file->getRealPath(), base_path() . DIRECTORY_SEPARATOR);
+                $relativePath = Str::after($file->getRealPath(), base_path().DIRECTORY_SEPARATOR);
                 $name = basename($file->getFilename(), '.blade.php');
 
                 // Read content for search
@@ -124,6 +123,7 @@ class TemplateViewerController extends Controller
             if ($catCompare !== 0) {
                 return $catCompare;
             }
+
             return strcmp($a['name'], $b['name']);
         });
 

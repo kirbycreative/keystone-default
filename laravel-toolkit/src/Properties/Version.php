@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Version extends Property
 {
     public $type = 'version';
@@ -28,5 +25,5 @@ class Version extends Property
         ];
     }
 
-    //public function accessor() {}
+    // public function accessor() {}
 }

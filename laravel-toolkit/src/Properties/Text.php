@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Text extends Property
 {
     public $type = 'text';
@@ -22,7 +19,6 @@ class Text extends Property
     {
         return [];
     }
-
 
     public function form()
     {

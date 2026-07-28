@@ -9,8 +9,11 @@ use Keystone\Toolkit\Models\AppModel;
 class ContentAsset extends AppModel
 {
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_PROCESSING = 'processing';
+
     public const STATUS_PROCESSED = 'processed';
+
     public const STATUS_FAILED = 'failed';
 
     protected $properties = [
@@ -57,14 +60,14 @@ class ContentAsset extends AppModel
             }
 
             if ($this->size < 1024) {
-                return $this->size . ' B';
+                return $this->size.' B';
             }
 
             if ($this->size < 1024 * 1024) {
-                return round($this->size / 1024, 1) . ' KB';
+                return round($this->size / 1024, 1).' KB';
             }
 
-            return round($this->size / 1024 / 1024, 1) . ' MB';
+            return round($this->size / 1024 / 1024, 1).' MB';
         });
     }
 }

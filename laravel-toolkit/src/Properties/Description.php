@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Description extends Property
 {
     public $type = 'description';
@@ -12,7 +9,6 @@ class Description extends Property
     public $fillable = true;
 
     public $label = 'Description';
-
 
     public $rules = [
         'type' => 'string',
@@ -26,7 +22,7 @@ class Description extends Property
                 'min' => 250,
             ],
             'truncate' => 175,
-            'align' => 'left'
+            'align' => 'left',
         ];
     }
 }

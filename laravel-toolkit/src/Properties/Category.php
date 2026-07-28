@@ -2,12 +2,9 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Category extends Property
 {
-    static function options()
+    public static function options()
     {
         return [
             'Logo Design' => 'logo',
@@ -28,7 +25,7 @@ class Category extends Property
         ];
     }
 
-    static function allowed()
+    public static function allowed()
     {
         return array_values(static::options());
     }
@@ -60,7 +57,7 @@ class Category extends Property
             'accessor' => function ($value) {
                 return implode(', ', $value);
             },
-            'label' => 'Categories'
+            'label' => 'Categories',
         ];
     }
 }

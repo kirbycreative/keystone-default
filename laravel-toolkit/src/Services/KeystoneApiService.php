@@ -89,6 +89,67 @@ class KeystoneApiService
         return $this->get('/site-layouts/'.rawurlencode($id));
     }
 
+    /** @return array<string, mixed> */
+    public function siteSchemaDraft(): array
+    {
+        return $this->get('/site-schema/draft');
+    }
+
+    /** @return array<string, mixed> */
+    public function siteSchemaPublished(): array
+    {
+        return $this->get('/site-schema/published');
+    }
+
+    public function siteUsage(): array
+    {
+        return $this->get('/site-usage');
+    }
+
+    /** @return array<string, mixed> */
+    public function siteSchemaVersions(): array
+    {
+        return $this->get('/site-schema/versions');
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    public function updateSiteSchema(
+        string $command,
+        array $payload,
+        string $checksum,
+        string $requestId,
+    ): array {
+        return $this->post('/site-schema/commands', [
+            'command' => $command,
+            'payload' => $payload,
+        ], [
+            'If-Match' => $checksum,
+            'Idempotency-Key' => $requestId,
+        ]);
+    }
+
+    /** @return array<string, mixed> */
+    public function publishSiteSchema(string $checksum, string $summary, string $requestId): array
+    {
+        return $this->post('/site-schema/publish', [
+            'change_summary' => $summary,
+        ], [
+            'If-Match' => $checksum,
+            'Idempotency-Key' => $requestId,
+        ]);
+    }
+
+    /** @return array<string, mixed> */
+    public function rollbackSiteSchema(string $versionId, string $requestId): array
+    {
+        return $this->post('/site-schema/versions/'.rawurlencode($versionId).'/rollback', [], [
+            'Idempotency-Key' => $requestId,
+        ]);
+    }
+
     public function recordAiFeedback(string $resourceType, string $resourceId, bool $helpful, ?string $reason = null): array
     {
         return $this->post('/ai-feedback', [

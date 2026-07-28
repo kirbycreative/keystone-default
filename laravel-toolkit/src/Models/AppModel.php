@@ -4,16 +4,17 @@ namespace Keystone\Toolkit\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Keystone\Toolkit\Traits\HasProperties;
 use Illuminate\Support\Str;
+use Keystone\Toolkit\Traits\HasProperties;
 
 class AppModel extends Model
 {
-
-    use HasProperties, HasFactory;
+    use HasFactory, HasProperties;
 
     protected $fillable = [];
+
     protected $dates = [];
+
     protected $properties = [];
 
     protected $identifier;
@@ -34,13 +35,13 @@ class AppModel extends Model
         $this->setupSchema();
 
         foreach ($this->schema['fillable'] as $fillable) {
-            if (!in_array($fillable, $this->fillable)) {
+            if (! in_array($fillable, $this->fillable)) {
                 $this->fillable[] = $fillable;
             }
         }
 
         foreach ($this->schema['casts'] as $property => $cast) {
-            if (!isset($this->casts[$property])) {
+            if (! isset($this->casts[$property])) {
                 $this->casts[$property] = $cast;
             }
         }
@@ -67,7 +68,7 @@ class AppModel extends Model
         $rules = [];
 
         foreach (static::getSchema()['properties'] as $property => $config) {
-            if (!isset($config['rules']) || $config['rules'] === []) {
+            if (! isset($config['rules']) || $config['rules'] === []) {
                 continue;
             }
 
@@ -93,31 +94,36 @@ class AppModel extends Model
 
     public function hasGetMutator($key)
     {
-        $accessorName = 'get' . Str::studly($key) . 'Attribute';
+        $accessorName = 'get'.Str::studly($key).'Attribute';
+
         return method_exists($this, $accessorName) || isset($this->methods[$accessorName]);
     }
 
     protected function mutateAttribute($key, $value)
     {
-        $accessorName = 'get' . Str::studly($key) . 'Attribute';
+        $accessorName = 'get'.Str::studly($key).'Attribute';
+
         return isset($this->methods[$accessorName]) ? $this->methods[$accessorName]($value) : $this->{$accessorName}($value);
     }
 
     protected function setMutatedAttributeValue($key, $value)
     {
-        $mutatorName = 'set' . Str::studly($key) . 'Attribute';
-        return  isset($this->methods[$mutatorName]) ? $this->methods[$mutatorName]($value) : $this->{$mutatorName}($value);
+        $mutatorName = 'set'.Str::studly($key).'Attribute';
+
+        return isset($this->methods[$mutatorName]) ? $this->methods[$mutatorName]($value) : $this->{$mutatorName}($value);
     }
 
     public function hasSetMutator($key)
     {
-        $mutatorName = 'set' . Str::studly($key) . 'Attribute';
+        $mutatorName = 'set'.Str::studly($key).'Attribute';
+
         return method_exists($this, $mutatorName) || isset($this->methods[$mutatorName]);
     }
 
     public static function hasSchema()
     {
         $className = get_called_class();
+
         return isset(static::$schemas[$className]);
     }
 
@@ -127,7 +133,8 @@ class AppModel extends Model
         if (isset(static::$schemas[$className])) {
             return static::$schemas[$className];
         } else {
-            $inst = new $className();
+            $inst = new $className;
+
             return $inst->schema;
         }
     }

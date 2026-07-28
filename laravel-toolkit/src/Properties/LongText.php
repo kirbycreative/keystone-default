@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class LongText extends Property
 {
     public $type = 'longtext';
@@ -25,10 +22,9 @@ class LongText extends Property
             'align' => 'left',
             'accessor' => function ($value) {
                 return strip_tags($value);
-            }
+            },
         ];
     }
-
 
     public function form()
     {
@@ -38,15 +34,14 @@ class LongText extends Property
         ];
     }
 
-
-
     public function mutator($value)
     {
         return collect(explode("\n", $value))
-            ->map(fn($paragraph) => trim(preg_replace('/[\r\n]+/', ' ', $paragraph)))
+            ->map(fn ($paragraph) => trim(preg_replace('/[\r\n]+/', ' ', $paragraph)))
             ->filter()
-            ->map(fn($paragraph) => "<p>$paragraph</p>")
+            ->map(fn ($paragraph) => "<p>$paragraph</p>")
             ->implode('');
+
         return $value;
     }
 }

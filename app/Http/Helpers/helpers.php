@@ -1,6 +1,6 @@
 <?php
 
-if (!function_exists('stage')) {
+if (! function_exists('stage')) {
 
     /**
      * Stage — the page composition.
@@ -23,13 +23,14 @@ if (!function_exists('stage')) {
         /** @var array<string, list<array{component: string, content: array}>> */
         private $_components = [];
 
-        static $instance;
+        public static $instance;
 
-        static function getInstance()
+        public static function getInstance()
         {
-            if (!isset(self::$instance)) {
-                self::$instance = new Stage();
+            if (! isset(self::$instance)) {
+                self::$instance = new Stage;
             }
+
             return self::$instance;
         }
 
@@ -38,7 +39,7 @@ if (!function_exists('stage')) {
         /**
          * Hydrate the stage from a config array, e.g. a saved staging draft.
          *
-         * @param array{components?: list<array{placement: string, component: string, content?: array}>} $config
+         * @param  array{components?: list<array{placement: string, component: string, content?: array}>}  $config
          */
         public function apply($config = [])
         {
@@ -60,7 +61,7 @@ if (!function_exists('stage')) {
          */
         public function component($placement, $component, $content = [])
         {
-            if (!isset($this->_components[$placement])) {
+            if (! isset($this->_components[$placement])) {
                 $this->_components[$placement] = [];
             }
 
@@ -88,13 +89,13 @@ if (!function_exists('stage')) {
             $ordered = [];
 
             foreach (self::REGIONS as $region) {
-                if (!empty($this->_components[$region])) {
+                if (! empty($this->_components[$region])) {
                     $ordered[$region] = $this->_components[$region];
                 }
             }
 
             foreach ($this->_components as $region => $entries) {
-                if (!in_array($region, self::REGIONS, true) && !empty($entries)) {
+                if (! in_array($region, self::REGIONS, true) && ! empty($entries)) {
                     $ordered[$region] = $entries;
                 }
             }
@@ -119,12 +120,13 @@ if (!function_exists('stage')) {
                 return null;
             }
 
-            if (!empty($name)) {
+            if (! empty($name)) {
                 foreach ($entries as $entry) {
                     if ($entry['component'] === $name) {
                         return $entry;
                     }
                 }
+
                 return null;
             }
 
@@ -144,12 +146,13 @@ if (!function_exists('stage')) {
                 return false;
             }
 
-            if (!empty($name)) {
+            if (! empty($name)) {
                 foreach ($this->_components[$placement] as $entry) {
                     if ($entry['component'] === $name) {
                         return true;
                     }
                 }
+
                 return false;
             }
 
@@ -167,7 +170,6 @@ if (!function_exists('stage')) {
             return array_keys($this->getComponents());
         }
     }
-
 
     function stage()
     {

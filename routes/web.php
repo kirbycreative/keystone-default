@@ -2,18 +2,30 @@
 
 use App\Http\Controllers\Admin\ContentAssetController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaLibraryController;
 use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Admin\PageSuggestionController;
+use App\Http\Controllers\Admin\SiteSettingsController;
+use App\Http\Controllers\Admin\SiteStructureController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\FormSubmissionController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TemplateViewerController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-})->name('home');
+Route::get('/', [SiteController::class, 'public'])->name('home');
+Route::get('/robots.txt', [SiteController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('sitemap');
+Route::post('/forms/{section}', [FormSubmissionController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('forms.store');
+Route::get('/robots.txt', [SiteController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SiteController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('sitemap');
 
 Route::get('/health', function () {
     DB::select('select 1');
@@ -50,24 +62,61 @@ Route::middleware(['auth', 'onboarded'])->prefix('admin')->name('admin.')->group
 
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::get('/build-status', [DashboardController::class, 'status'])->name('build-status');
+    Route::get('/media-library', [MediaLibraryController::class, 'index'])->name('media-library.index');
+    Route::post('/media-library', [MediaLibraryController::class, 'store'])
+        ->middleware('site-editor')->name('media-library.store');
     Route::middleware('page-tree-approved')->group(function (): void {
         Route::get('/content', [ContentAssetController::class, 'index'])->name('content.index');
-        Route::post('/content', [ContentAssetController::class, 'store'])->name('content.store');
-        Route::post('/content/drop', [ContentAssetController::class, 'dropUpload'])->name('content.drop');
+        Route::post('/content', [ContentAssetController::class, 'store'])
+            ->middleware('site-editor')->name('content.store');
+        Route::post('/content/drop', [ContentAssetController::class, 'dropUpload'])
+            ->middleware('site-editor')->name('content.drop');
         Route::get('/content/review', [ContentAssetController::class, 'review'])->name('content.review');
         Route::get('/content/{contentAsset}/download', [ContentAssetController::class, 'download'])
             ->name('content.download');
     });
     Route::get('/page-suggestions', [PageSuggestionController::class, 'index'])->name('page-suggestions.index');
-    Route::post('/page-suggestions/generate', [PageSuggestionController::class, 'generate'])->name('page-suggestions.generate');
+    Route::post('/page-suggestions/generate', [PageSuggestionController::class, 'generate'])
+        ->middleware('site-editor')->name('page-suggestions.generate');
     Route::patch('/page-suggestions/{pageSuggestion}/status', [PageSuggestionController::class, 'updateStatus'])
-        ->name('page-suggestions.status');
+        ->middleware('site-editor')->name('page-suggestions.status');
     Route::patch('/page-suggestions/{pageSuggestion}/feedback', [PageSuggestionController::class, 'feedback'])
-        ->name('page-suggestions.feedback');
+        ->middleware('site-editor')->name('page-suggestions.feedback');
+    Route::get('/site-settings', [SiteSettingsController::class, 'show'])->name('site-settings');
+    Route::get('/site-preview', [SiteController::class, 'preview'])->name('site-preview');
+    Route::patch('/site-settings/identity', [SiteSettingsController::class, 'identity'])->name('site-settings.identity');
+    Route::patch('/site-settings/seo', [SiteSettingsController::class, 'seo'])->name('site-settings.seo');
+    Route::post('/site-settings/publish', [SiteSettingsController::class, 'publish'])->name('site-settings.publish');
+    Route::patch('/site-settings/features', [SiteSettingsController::class, 'features'])->name('site-settings.features');
+    Route::patch('/site-settings/integrations', [SiteSettingsController::class, 'integrations'])
+        ->name('site-settings.integrations');
+    Route::post('/site-settings/versions/{version}/rollback', [SiteSettingsController::class, 'rollback'])
+        ->name('site-settings.rollback');
+    Route::get('/site-structure', [SiteStructureController::class, 'show'])->name('site-structure');
+    Route::put('/site-structure/pages', [SiteStructureController::class, 'page'])->name('site-structure.page');
+    Route::delete('/site-structure/pages/{page}', [SiteStructureController::class, 'deletePage'])
+        ->name('site-structure.page.delete');
+    Route::put('/site-structure/sections', [SiteStructureController::class, 'section'])->name('site-structure.section');
+    Route::put('/site-structure/navigation', [SiteStructureController::class, 'navigation'])
+        ->name('site-structure.navigation');
+    Route::delete('/site-structure/pages/{page}/sections/{section}', [SiteStructureController::class, 'deleteSection'])
+        ->name('site-structure.section.delete');
 });
+
+Route::get('/{path}', [SiteController::class, 'public'])
+    ->where('path', '.*')
+    ->name('site.page');
 
 // Template Viewer Routes
 Route::middleware(['auth', 'onboarded'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/templates', [TemplateViewerController::class, 'index'])->name('templates.index');
     Route::get('/templates/{path}', [TemplateViewerController::class, 'show'])->name('templates.show');
 });
+
+Route::get('/{path}', [SiteController::class, 'public'])
+    ->where('path', '.*')
+    ->name('site.page');
+
+Route::get('/{path}', [SiteController::class, 'public'])
+    ->where('path', '.*')
+    ->name('site.page');

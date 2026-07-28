@@ -2,6 +2,7 @@
 
 namespace Keystone\Toolkit\Support;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -61,7 +62,9 @@ class ClientAssetStorage
 
         $path = $file->storeAs($directoryPath, $filename, [
             'disk' => $disk,
-            'visibility' => $visibility === self::PUBLIC ? 'public' : 'private',
+            // "Public" is an application delivery tier, not an S3 ACL. Tenant buckets block all
+            // public ACLs and expose these keys only through the authenticated delivery layer.
+            'visibility' => 'private',
         ]);
 
         return [
@@ -97,10 +100,10 @@ class ClientAssetStorage
 
         $newPath = self::path($userId, $target, $remainder);
 
-        /** @var \Illuminate\Filesystem\FilesystemAdapter $adapter */
+        /** @var FilesystemAdapter $adapter */
         $adapter = Storage::disk($disk);
         $adapter->move($path, $newPath);
-        $adapter->setVisibility($newPath, $target === self::PUBLIC ? 'public' : 'private');
+        $adapter->setVisibility($newPath, 'private');
 
         return ['disk' => $disk, 'path' => $newPath, 'visibility' => $target];
     }
@@ -114,7 +117,7 @@ class ClientAssetStorage
             return null;
         }
 
-        /** @var \Illuminate\Filesystem\FilesystemAdapter $adapter */
+        /** @var FilesystemAdapter $adapter */
         $adapter = Storage::disk(self::disk());
 
         return $adapter->url($path);

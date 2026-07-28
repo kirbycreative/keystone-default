@@ -33,6 +33,11 @@
                             Suggestions</a></li>
                     <li><a href="{{ route('admin.templates.index') }}"
                             class="{{ request()->routeIs('admin.templates.*') ? 'is-active' : '' }}">Templates</a></li>
+                    <li><a href="{{ route('admin.site-settings') }}"
+                            class="{{ request()->routeIs('admin.site-settings*') ? 'is-active' : '' }}">Site Settings</a></li>
+                    <li><a href="{{ route('admin.site-structure') }}"
+                            class="{{ request()->routeIs('admin.site-structure*') ? 'is-active' : '' }}">Structure</a></li>
+                    <li><a href="{{ route('admin.site-preview') }}">Preview</a></li>
                 </ul>
             </nav>
         @endif

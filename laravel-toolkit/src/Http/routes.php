@@ -8,7 +8,7 @@ use Keystone\Toolkit\Http\Controllers\ModelController;
 | ToolkitServiceProvider using the prefix + middleware from config/models.php.
 */
 
-Route::prefix(config('keystone.models.prefix', 'api/model') . '/{model}')
+Route::prefix(config('keystone.models.prefix', 'api/model').'/{model}')
     ->middleware(config('keystone.models.middleware', ['web', 'auth']))
     ->group(function (): void {
         Route::post('/', [ModelController::class, 'create']);

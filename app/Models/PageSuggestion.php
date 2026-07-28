@@ -9,7 +9,9 @@ use Keystone\Toolkit\Models\AppModel;
 class PageSuggestion extends AppModel
 {
     public const STATUS_SUGGESTED = 'suggested';
+
     public const STATUS_APPROVED = 'approved';
+
     public const STATUS_REJECTED = 'rejected';
 
     public const TASK_SITEMAP = 'sitemap';

@@ -11,6 +11,7 @@ class CustomRule implements Rule
         // Your validation logic here
         return $value == 'custom_value';
     }
+
     public function message()
     {
         return 'The validation failed for this custom rule.';

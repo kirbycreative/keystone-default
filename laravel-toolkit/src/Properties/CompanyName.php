@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class CompanyName extends Property
 {
     public $type = 'string';
@@ -21,19 +18,16 @@ class CompanyName extends Property
     public function table()
     {
         return [
-            'align' => 'center'
+            'align' => 'center',
         ];
     }
-
 
     public function form()
     {
         return [
-            'type' => 'text'
+            'type' => 'text',
         ];
     }
-
-
 
     /*
     public function accessor(string $value): string

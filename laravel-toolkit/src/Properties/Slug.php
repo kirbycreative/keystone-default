@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Slug extends Property
 {
     public $type = 'slug';
@@ -33,5 +30,5 @@ class Slug extends Property
         ];
     }
 
-    //public function accessor() {}
+    // public function accessor() {}
 }

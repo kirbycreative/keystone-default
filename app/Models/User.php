@@ -9,13 +9,19 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Keystone\Toolkit\Traits\HasClientAssets;
 use Keystone\Toolkit\Services\KeystoneApiService;
+use Keystone\Toolkit\Traits\HasClientAssets;
 
 class User extends Authenticatable
 {
+    public const ROLE_OWNER = 'owner';
+
+    public const ROLE_EDITOR = 'editor';
+
+    public const ROLE_VIEWER = 'viewer';
+
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasClientAssets;
+    use HasClientAssets, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +33,7 @@ class User extends Authenticatable
         'email',
         'password',
         'onboarded',
+        'role',
     ];
 
     /**
@@ -76,6 +83,16 @@ class User extends Authenticatable
         return $this->onboarding()->firstOrCreate([], ['step' => Onboarding::STEP_DNS]);
     }
 
+    public function canEditSite(): bool
+    {
+        return in_array($this->role, [self::ROLE_OWNER, self::ROLE_EDITOR], true);
+    }
+
+    public function canPublishSite(): bool
+    {
+        return $this->role === self::ROLE_OWNER;
+    }
+
     public function sendPasswordResetNotification($token): void
     {
         app(KeystoneApiService::class)->sendPasswordReset(
@@ -86,5 +103,4 @@ class User extends Authenticatable
             ]),
         );
     }
-
 }

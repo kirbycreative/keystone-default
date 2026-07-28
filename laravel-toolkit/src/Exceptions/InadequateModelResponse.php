@@ -9,6 +9,4 @@ use RuntimeException;
  * or rejected by the caller's adequacy check). These count as strikes against the model;
  * transient/infra failures use the base RuntimeException and do not.
  */
-class InadequateModelResponse extends RuntimeException
-{
-}
+class InadequateModelResponse extends RuntimeException {}

@@ -19,7 +19,7 @@ class ToolkitPackageTest extends TestCase
 
     public function test_model_properties_drive_fillable_casts_forms_tables_and_rules(): void
     {
-        $model = new ToolkitExampleModel();
+        $model = new ToolkitExampleModel;
         $schema = ToolkitExampleModel::getSchema();
 
         $this->assertSame(

@@ -2,10 +2,6 @@
 
 namespace Keystone\Toolkit\Helpers\VirtualDom;
 
-use Keystone\Toolkit\Helpers\VirtualDom\Attributes;
-use Keystone\Toolkit\Helpers\VirtualDom\Children;
-use Keystone\Toolkit\Helpers\VirtualDom\Render;
-
 function first($arr)
 {
     return $arr[0];
@@ -13,34 +9,44 @@ function first($arr)
 
 class Element
 {
-
-    static function is($data)
+    public static function is($data)
     {
-        if ((is_object($data) || is_array($data)) && data_get($data, 'tag')) return true;
+        if ((is_object($data) || is_array($data)) && data_get($data, 'tag')) {
+            return true;
+        }
+
         return false;
     }
 
-    static function fromArray($arr)
+    public static function fromArray($arr)
     {
         return new Element($arr['tag'], $arr['attributes'] ?? [], $arr['children'] ?? []);
     }
 
     public $tag = 'div';
+
     public $attributes;
+
     public $children = [];
+
     public $ref;
+
     public $parent;
 
-    function __construct($tag = 'div', $attributes = [], $children = [], $ref = null)
+    public function __construct($tag = 'div', $attributes = [], $children = [], $ref = null)
     {
-        if (is_a($tag, 'Keystone\Toolkit\Helpers\VirtualDom\Element')) return $tag;
+        if (is_a($tag, 'Keystone\Toolkit\Helpers\VirtualDom\Element')) {
+            return $tag;
+        }
         $this->tag = $tag;
         $this->attributes = new Attributes($attributes);
         $this->children = is_string($children) ? [$children] : $children;
-        if (!empty($ref)) $this->ref = $ref;
+        if (! empty($ref)) {
+            $this->ref = $ref;
+        }
     }
 
-    private function parseChild( /* Child Arguments */)
+    private function parseChild(/* Child Arguments */)
     {
 
         $num = func_num_args();
@@ -57,6 +63,7 @@ class Element
         $child = $this->parseChild(...func_get_args());
         $child->parent = $this;
         $this->children[] = $child;
+
         return $child;
     }
 
@@ -92,17 +99,21 @@ class Element
         $arr = [
             'tag' => $this->tag,
             'attributes' => $this->attributes->toArray(),
-            'children' => []
+            'children' => [],
         ];
 
         foreach ($this->children as $child) {
-            if (is_string($child))
+            if (is_string($child)) {
                 $arr['children'][] = $child;
-            else
+            } else {
                 $arr['children'][] = $child->toArray();
+            }
         }
 
-        if (!empty($this->ref)) $arr->ref = $this->ref;
+        if (! empty($this->ref)) {
+            $arr->ref = $this->ref;
+        }
+
         return $arr;
     }
 

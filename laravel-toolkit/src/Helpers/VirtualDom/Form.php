@@ -2,18 +2,15 @@
 
 namespace Keystone\Toolkit\Helpers\VirtualDom;
 
-use Keystone\Toolkit\Helpers\VirtualDom\Element;
+$globalAttributes = ['accesskey', 'class', 'contenteditable', 'data-*', 'dir', 'draggable', 'hidden', 'id', 'lang', 'spellcheck', 'style', 'tabindex', 'title', 'translate'];
 
-$globalAttributes = ["accesskey", "class", "contenteditable", "data-*", "dir", "draggable", "hidden", "id", "lang", "spellcheck", "style", "tabindex", "title", "translate"];
+$formElementTypes = ['input', 'label', 'select', 'textarea', 'button', 'fieldset', 'legend', 'datalist', 'output', 'option', 'optgroup'];
 
-$formElementTypes = ["input", "label", "select", "textarea", "button", "fieldset", "legend", "datalist", "output", "option", "optgroup"];
-
-$formInputTypes = ["button", "checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
+$formInputTypes = ['button', 'checkbox', 'color', 'date', 'datetime-local', 'email', 'file', 'hidden', 'image', 'month', 'number', 'password', 'radio', 'range', 'reset', 'search', 'submit', 'tel', 'text', 'time', 'url', 'week'];
 
 class Form
 {
-
-    static function extractOptions(&$attrs)
+    public static function extractOptions(&$attrs)
     {
         $extractable = ['default'];
         $options = [];
@@ -35,8 +32,7 @@ class Form
         return $options;
     }
 
-
-    static function create($name, $options = [])
+    public static function create($name, $options = [])
     {
 
         $action = $options['action'] ?? 'return';
@@ -44,34 +40,35 @@ class Form
 
         $name = str_replace('_', '-', $name);
 
-        $id = 'form--' . strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $name));
+        $id = 'form--'.strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $name));
 
         $form = new Element('form', ['id' => $id, 'name' => $name, 'action' => $action, 'method' => $method]);
 
         return $form;
     }
 
-    static function getId($name)
+    public static function getId($name)
     {
         if (strpos($name, '[')) {
             $name = str_replace('][', '--', $name);
             $name = str_replace('[', '--', $name);
             $name = str_replace(']', '', $name);
         }
-        return 'input--' . str_replace('_', '-', $name);
+
+        return 'input--'.str_replace('_', '-', $name);
     }
 
-    static function button($text, $onclick)
+    public static function button($text, $onclick)
     {
         return new Element('button', ['onclick' => $onclick]);
     }
 
-    static function submit($text)
+    public static function submit($text)
     {
-        return new Element('input', ['type' => "submit", 'value' => $text]);
+        return new Element('input', ['type' => 'submit', 'value' => $text]);
     }
 
-    static function hidden($name, $value, $attributes = [])
+    public static function hidden($name, $value, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -82,21 +79,22 @@ class Form
         return new Element('input', $attributes);
     }
 
-    static function checkbox($name, $value, $checked, $attributes = [])
+    public static function checkbox($name, $value, $checked, $attributes = [])
     {
-
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
         $attributes['name'] = $attributes['name'] ?? $name;
         $attributes['type'] = 'checkbox';
         $attributes['value'] = $value;
 
-        if ($checked) $attributes['checked'] = null;
+        if ($checked) {
+            $attributes['checked'] = null;
+        }
 
         return new Element('input', $attributes);
     }
 
-    static function radio($name, $value, $checked, $attributes = [])
+    public static function radio($name, $value, $checked, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -104,12 +102,14 @@ class Form
         $attributes['type'] = 'radio';
         $attributes['value'] = $value;
 
-        if ($checked) $attributes['checked'] = null;
+        if ($checked) {
+            $attributes['checked'] = null;
+        }
 
         return new Element('input', $attributes);
     }
 
-    static function text($name, $value = '', $attributes = [])
+    public static function text($name, $value = '', $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -120,7 +120,7 @@ class Form
         return new Element('input', $attributes);
     }
 
-    static function input($type, $name, $value, $attributes = [])
+    public static function input($type, $name, $value, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -131,7 +131,7 @@ class Form
         return new Element('input', $attributes);
     }
 
-    static function date($name, $value, $attributes = [])
+    public static function date($name, $value, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -142,7 +142,7 @@ class Form
         return new Element('input', $attributes);
     }
 
-    static function datetime($name, $value, $attributes = [])
+    public static function datetime($name, $value, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -153,7 +153,7 @@ class Form
         return new Element('input', $attributes);
     }
 
-    static function textarea($name, $value, $attributes = [])
+    public static function textarea($name, $value, $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -163,7 +163,7 @@ class Form
         return new Element('textarea', $attributes, [$value]);
     }
 
-    static function select($name, $value = '', $options = [], $attributes = [])
+    public static function select($name, $value = '', $options = [], $attributes = [])
     {
 
         $attributes['id'] = $attributes['id'] ?? self::getId($name);
@@ -173,14 +173,14 @@ class Form
         return new Element('select', $attributes, self::options($options, $value));
     }
 
-    static function optgroup() {}
+    public static function optgroup() {}
 
-    static function description($text)
+    public static function description($text)
     {
         return new Element('div', ['class' => 'field-description'], [$text]);
     }
 
-    static function field($type, ...$args)
+    public static function field($type, ...$args)
     {
 
         $fieldSpecialAttrs = ['label', 'label_placement', 'description', 'field_class'];
@@ -198,17 +198,23 @@ class Form
             }
         }
 
-        if (in_array($type, ['checkbox', 'radio'])) $special['label_placement'] = 'around';
+        if (in_array($type, ['checkbox', 'radio'])) {
+            $special['label_placement'] = 'around';
+        }
 
         $label_placement = $special['label_placement'] ?? 'before';
 
         $classes = ['field', "type-{$type}"];
 
-        if (isset($special['field_class'])) array_push($classes, $special['field_class']);
+        if (isset($special['field_class'])) {
+            array_push($classes, $special['field_class']);
+        }
 
-        if (isset($attributes['required'])) $classes[] = 'required';
+        if (isset($attributes['required'])) {
+            $classes[] = 'required';
+        }
 
-        $field = new Element('div', ['class' => join(' ', $classes)]);
+        $field = new Element('div', ['class' => implode(' ', $classes)]);
 
         $input = self::{$type}(...$args);
 
@@ -229,31 +235,38 @@ class Form
             array_unshift($field->children, $label);
         }
 
-        if (isset($special['description']))
+        if (isset($special['description'])) {
             $field->children[] = self::description($special['description']);
+        }
 
         return $field;
     }
 
-    static function datalist($element_id, $options)
+    public static function datalist($element_id, $options)
     {
         $children = [];
         foreach ($options as $option) {
             $children[] = self::option($option);
         }
-        return new Element('datalist', ['id' => $element_id . '-list'], $children);
+
+        return new Element('datalist', ['id' => $element_id.'-list'], $children);
     }
 
-    static function option($value, $text, $selected = false)
+    public static function option($value, $text, $selected = false)
     {
         $children = [];
         $attrs = ['value' => $value];
-        if (!empty($text)) $children = [$text];
-        if ($selected) $attrs['selected'] = null;
+        if (! empty($text)) {
+            $children = [$text];
+        }
+        if ($selected) {
+            $attrs['selected'] = null;
+        }
+
         return new Element('option', $attrs, $children);
     }
 
-    static function options($options, $default = '')
+    public static function options($options, $default = '')
     {
         $elements = [];
         foreach ($options as $value => $text) {
@@ -264,21 +277,21 @@ class Form
                 $elements[] = self::option($k, $text, $k == $default);
             }
         }
+
         return $elements;
     }
 
-
-    static function fieldset()
+    public static function fieldset()
     {
         return new Element('fieldset');
     }
 
-    static function ledgend($text)
+    public static function ledgend($text)
     {
         return new Element('ledgend', [], $text);
     }
 
-    static function label($inputName, $text)
+    public static function label($inputName, $text)
     {
         $inputId = self::getId($inputName);
         if (empty($text)) {
@@ -290,15 +303,16 @@ class Form
             }
             $text = ucwords(str_replace('_', ' ', $name));
         }
+
         return new Element('label', ['for' => $inputId], [$text]);
     }
 
-    static function row($children)
+    public static function row($children)
     {
         return new Element('div', ['class' => 'row'], $children);
     }
 
-    static function block($children)
+    public static function block($children)
     {
         return new Element('div', ['class' => 'block'], $children);
     }

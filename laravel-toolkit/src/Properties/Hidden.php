@@ -10,7 +10,6 @@ class Hidden extends Property
 
     public $label = 'Hidden';
 
-
     public $rules = [
         'type' => 'int',
         'required',

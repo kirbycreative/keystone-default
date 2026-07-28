@@ -551,6 +551,4 @@ The client must not receive model credentials or directly mutate a provider/mode
 2. Submit onboarding only from the final completion action.
 3. Persist stable idempotency keys and remote job/resource IDs before retrying.
 4. Upload private assets to Kirby Creative and poll ingestion status.
-5. Replace the remaining direct `OpenRouterService` sitemap and feedback calls.
-6. Remove `OPENROUTER_*` client configuration after the final direct dependency is removed.
-7. Test request schemas, authentication headers, error propagation, retries, and result normalization.
+5. Test request schemas, authentication headers, error propagation, retries, and result normalization.

@@ -6,26 +6,27 @@ use Illuminate\Support\Str;
 
 trait HasProperties
 {
-
     public static $rules = [];
+
     public static $schemas = [];
 
     protected $fillable = [];
-    protected $methodCache = [];
-    protected $schema = [];
-    public $methods = [];
 
+    protected $methodCache = [];
+
+    protected $schema = [];
+
+    public $methods = [];
 
     /**
      * Setup the schema for the model.
-     *
-     * @return void
      */
     private function setupSchema(): void
     {
         // If the schema is already set, then return
         if (isset(static::$schemas[$this->identifier])) {
             $this->schema = static::$schemas[$this->identifier];
+
             return;
         }
 
@@ -68,11 +69,11 @@ trait HasProperties
                 unset($config['table']);
             }
 
-            if (isset($config['fillable']) && $config['fillable'] == true && !in_array($property, $this->fillable)) {
+            if (isset($config['fillable']) && $config['fillable'] == true && ! in_array($property, $this->fillable)) {
                 $this->schema['fillable'][] = $property;
             }
 
-            if (isset($config['cast']) && !isset($this->casts[$property])) {
+            if (isset($config['cast']) && ! isset($this->casts[$property])) {
                 $this->schema['casts'][$property] = $config['cast'];
                 unset($config['cast']);
             }
@@ -99,10 +100,8 @@ trait HasProperties
 
     private function applySchemaProperty($name)
     {
-        //Apply each property to the model
+        // Apply each property to the model
         $propertySchema = $this->schema['properties'][$name];
-
-
 
         if (isset($propertySchema['cast'])) {
             $this->casts[$name] = $propertySchema['cast'];
@@ -113,12 +112,12 @@ trait HasProperties
         }
 
         if (isset($propertySchema['accessor'])) {
-            $accessorName = 'get' . Str::studly($name) . 'Attribute';
+            $accessorName = 'get'.Str::studly($name).'Attribute';
             $this->methods[$accessorName] = $propertySchema['accessor'];
         }
 
         if (isset($propertySchema['mutator'])) {
-            $mutatorName = 'set' . Str::studly($name) . 'Attribute';
+            $mutatorName = 'set'.Str::studly($name).'Attribute';
             $this->methods[$mutatorName] = $propertySchema['mutator'];
         }
     }
@@ -141,6 +140,7 @@ trait HasProperties
 
             if ($method === false) {
                 $config[$cmethod] = false;
+
                 continue;
             }
 
@@ -155,13 +155,13 @@ trait HasProperties
 
     public function getPropertySchema($property, $modelDefined = [])
     {
-        if (!isset($modelDefined['type']) || empty($modelDefined['type'])) {
+        if (! isset($modelDefined['type']) || empty($modelDefined['type'])) {
             $type = $property;
         } else {
             $type = $modelDefined['type'];
         }
 
-        $propertyClass = "\\Keystone\\Toolkit\\Properties\\" . ucwords(Str::camel($type));
+        $propertyClass = '\\Keystone\\Toolkit\\Properties\\'.ucwords(Str::camel($type));
 
         if (class_exists($propertyClass)) {
             return array_merge($this->ingestProperty($property, $propertyClass), $modelDefined);

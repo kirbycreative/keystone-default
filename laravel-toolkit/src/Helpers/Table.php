@@ -2,29 +2,32 @@
 
 namespace Keystone\Toolkit\Helpers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Keystone\Toolkit\Helpers\VirtualDom\Element;
-use Illuminate\Database\Eloquent\Collection;
 
 class Table
 {
-
-
-    static function fromModel($model, $options = [])
+    public static function fromModel($model, $options = [])
     {
         $paginator = $model::all()->paginate(15);
         $options['paginator'] = $paginator;
         $inspected = inspect($model);
+
         return new Table($inspected['value'], $options);
     }
 
     public $data = [];
+
     public $header = null;
+
     public $rows = null;
+
     public $headings = [];
+
     public $options = [];
 
-    function __construct($data = [], $options = [])
+    public function __construct($data = [], $options = [])
     {
 
         $this->data = $data;
@@ -37,9 +40,9 @@ class Table
     {
         $attrs = [];
         $classes = $config['class'] ?? [];
-        $cid = 'col--' . str_replace('_', '-', $name);
+        $cid = 'col--'.str_replace('_', '-', $name);
         $styles = [];
-        $selector = '.' . $cid;
+        $selector = '.'.$cid;
         $attrs['class'] = $cid;
 
         if (isset($config['align'])) {
@@ -52,7 +55,7 @@ class Table
 
         if (isset($config['width'])) {
             if (isset($config['width']['min'])) {
-                $styles['min-width'] = is_integer($config['width']['min']) ? $config['width']['min'] . 'px' : $config['width']['min'];
+                $styles['min-width'] = is_int($config['width']['min']) ? $config['width']['min'].'px' : $config['width']['min'];
             }
         }
 
@@ -62,7 +65,7 @@ class Table
         }
 
         page()->style([
-            $selector => $styles
+            $selector => $styles,
         ]);
 
         return $attrs;
@@ -80,19 +83,18 @@ class Table
         if (isset($config['truncate'])) {
             if (strlen($value) > $config['truncate']) {
                 $value = substr($value, 0, $config['truncate']);
-                $value .= "...";
+                $value .= '...';
             }
         }
 
         if (isset($config['link'])) {
             $value = new Element('a', [
-                'href' => $config['link']['href']
+                'href' => $config['link']['href'],
             ], [$config['link']['text']]);
         }
 
-
         if (is_array($value)) {
-            $value = implode(", ", $value);
+            $value = implode(', ', $value);
         }
 
         return $value;
@@ -105,20 +107,24 @@ class Table
      * @return string
      */
     {
-        //dd($this);
+        // dd($this);
         // dd($this->rows);
         $html = [];
         if ($this->options['add_link']) {
             $addLink = new Element('a', [
                 'class' => 'button-sm border-slate-50 float-right',
-                'href' => $this->options['add_link']
+                'href' => $this->options['add_link'],
             ], ['Create New']);
             $html[] = $addLink->render();
         }
         $html[] = '<div class="table-wrapper">';
         $html[] = '<table class="table w-full relative">';
-        if (!empty($this->header)) $html[] = $this->header->render();
-        if (!empty($this->rows)) $html[] = $this->rows->render('content');
+        if (! empty($this->header)) {
+            $html[] = $this->header->render();
+        }
+        if (! empty($this->rows)) {
+            $html[] = $this->rows->render('content');
+        }
 
         $html[] = '</table>';
         $html[] = '</div>';
@@ -127,12 +133,12 @@ class Table
             $html[] = $addLink->render();
         }
 
-        //$html[] = 
+        // $html[] =
 
         return implode("\n", $html);
     }
 
-    function initialize()
+    public function initialize()
     {
 
         $inspected = inspect($this->data);
@@ -143,7 +149,7 @@ class Table
 
         if ($this->data instanceof Collection && $this->data->count() > 0) {
             $model = $this->data->getQueueableClass();
-            new $model();
+            new $model;
             // $modelClass = get_class($model);
             $schema = $model::$schemas[$model];
             $properties = $schema['properties'];
@@ -151,9 +157,6 @@ class Table
             $labels = method_exists($model, 'labels') ? $model::labels() : null;
             $records = $this->data->all();
         }
-
-
-
 
         // if (!Arr::isAssoc($this->data)) {
         // $record = $this->data[0];
@@ -164,7 +167,7 @@ class Table
 
             if (is_string($value)) {
                 $value = [
-                    'label' => ucfirst($value)
+                    'label' => ucfirst($value),
                 ];
             }
 
@@ -174,7 +177,7 @@ class Table
                 $label = $value['th']['label'];
             } elseif (isset($value['label'])) {
                 $label = $value['label'];
-            } else if (isset($properties[$key]['label'])) {
+            } elseif (isset($properties[$key]['label'])) {
                 $label = $properties[$key]['label'];
             }
 
@@ -187,7 +190,7 @@ class Table
             $columns[$key] = [
                 'label' => $label,
                 'attributes' => $attributes,
-                'config' => $value
+                'config' => $value,
             ];
             $header->addChild('th', $attributes, $label);
         }
@@ -196,7 +199,7 @@ class Table
             $header->addChild('th', ['class' => 'col--actions', 'colspan' => count($this->options['actions'])], 'Actions');
         }
 
-        $rows = new Element('tbody', ['class' => "table-body"]);
+        $rows = new Element('tbody', ['class' => 'table-body']);
         foreach ($records as $record) {
             $data = $record->toArray();
 
@@ -207,8 +210,6 @@ class Table
                 $config = $options['config'];
                 $value = $this->columnValue($data[$key], $data, $config);
 
-
-
                 $row->addChild('td', ['class' => $className], $value);
             }
 
@@ -217,14 +218,13 @@ class Table
                     $actions = $record->actions();
                     foreach ($this->options['actions'] as $action) {
                         if (isset($actions[$action])) {
-                            $link = '<a href="' . $actions[$action] . '" class="action-link">' . ucfirst($action) . '</a>';
+                            $link = '<a href="'.$actions[$action].'" class="action-link">'.ucfirst($action).'</a>';
                             $row->addChild('td', ['class' => 'col--actions'], [$link]);
                         }
                     }
                 }
             }
         }
-
 
         $this->rows = $rows;
 

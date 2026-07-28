@@ -6,12 +6,11 @@ use ArrayObject;
 
 class Attributes extends ArrayObject
 {
-
-    function __construct($attributes = [])
+    public function __construct($attributes = [])
     {
         parent::setFlags(parent::ARRAY_AS_PROPS);
 
-        if (!empty($attributes)) {
+        if (! empty($attributes)) {
             foreach ($attributes as $key => $val) {
                 $this->{$key} = $val;
             }

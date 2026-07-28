@@ -7,7 +7,6 @@ abstract class AdminController
     public function __construct()
     {
 
-
         page()->addClass('dark');
     }
 }

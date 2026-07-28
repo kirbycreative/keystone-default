@@ -14,6 +14,12 @@ class PasswordResetTest extends TestCase
 
     public function test_account_owner_can_request_and_use_a_single_use_password_link(): void
     {
+        config([
+            'app.url' => 'https://client.keystone.test',
+            'services.keystone.url' => 'https://kirbycreative.co/api',
+            'services.keystone.token' => 'test-api-token',
+        ]);
+
         Http::fake(['*' => Http::response(['sent' => true])]);
         $user = User::factory()->create();
 
@@ -27,6 +33,8 @@ class PasswordResetTest extends TestCase
                 && $request->data()['email'] === $user->email
                 && is_string($resetUrl);
         });
+
+        $this->get($resetUrl)->assertOk();
 
         $token = basename((string) parse_url($resetUrl, PHP_URL_PATH));
         $this->post(route('password.update'), [

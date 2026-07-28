@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Arr;
-use Keystone\Toolkit\Helpers\VirtualDom\Element;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Keystone\Toolkit\Helpers\Table;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Keystone\Toolkit\Helpers\Image;
+use Keystone\Toolkit\Helpers\Table;
+use Keystone\Toolkit\Helpers\VirtualDom\Render;
 
-if (!function_exists('inspect')) {
+if (! function_exists('inspect')) {
 
     function getProtectedProperty($object, $propertyName)
     {
@@ -16,9 +17,10 @@ if (!function_exists('inspect')) {
             $property = $reflection->getProperty($propertyName);
             $property->setAccessible(true);
             $value = $property->getValue($object);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $value = null;
         }
+
         return $value;
     }
 
@@ -31,7 +33,7 @@ if (!function_exists('inspect')) {
         // Loop through all methods of the model
         foreach ($reflection->getMethods() as $method) {
             // Skip methods that are not defined by the user
-            if ($method->class !== $modelClass || !$method->isPublic() || $method->getNumberOfParameters() > 0) {
+            if ($method->class !== $modelClass || ! $method->isPublic() || $method->getNumberOfParameters() > 0) {
                 continue;
             }
 
@@ -44,10 +46,10 @@ if (!function_exists('inspect')) {
                     $relations[$method->getName()] = [
                         'foreignKey' => $result->getForeignKeyName(),
                         'localKey' => $result->getLocalKeyName(),
-                        'model' => $result->getRelated()
+                        'model' => $result->getRelated(),
                     ];
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Ignore any exceptions when calling the method
             }
         }
@@ -61,12 +63,12 @@ if (!function_exists('inspect')) {
         $resp['type'] = gettype($data);
         $resp['value'] = $data;
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             $resp['className'] = get_class($data);
             $resp['classBaseName'] = class_basename($data);
         }
 
-        if ($data instanceof Illuminate\Database\Eloquent\Collection) {
+        if ($data instanceof Collection) {
             $resp['type'] = 'collection';
             $resp['count'] = $data->count();
             if ($resp['count'] > 0) {
@@ -74,15 +76,15 @@ if (!function_exists('inspect')) {
                 $resp['records'] = $data->all();
                 $resp['related'] = $data->getQueueableRelations();
                 $resp['primaryClass'] = $data->getQueueableClass();
-                $resp['model'] = inspect(new $resp['primaryClass']());
+                $resp['model'] = inspect(new $resp['primaryClass']);
             }
-        } elseif ($data instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+        } elseif ($data instanceof LengthAwarePaginator) {
             $resp['type'] = 'paginator';
             $resp['count'] = $data->total();
             $paginator = $data;
             $data = $data->items();
             $resp['value'] = $data;
-        } elseif ($data instanceof Illuminate\Database\Eloquent\Model) {
+        } elseif ($data instanceof Model) {
             $resp['type'] = 'model';
             $resp['identifier'] = strtolower(preg_replace('/\B([A-Z])/', '_$1', $resp['classBaseName']));
             $resp['table'] = $data->getTable();
@@ -93,7 +95,7 @@ if (!function_exists('inspect')) {
             $resp['withCount'] = $data->withCount;
             $resp['relations'] = getModelRelations($data);
             if ($data->withCount > 0) {
-                //array_push($resp['columns'], $data->with);
+                // array_push($resp['columns'], $data->with);
             }
         } elseif (is_array($data)) {
             $resp['count'] = count($data);
@@ -104,11 +106,12 @@ if (!function_exists('inspect')) {
     }
 }
 
-if (!function_exists('table')) {
+if (! function_exists('table')) {
 
     function table($data = [], $options = [])
     {
         $table = new Table($data, $options);
+
         return $table->render();
     }
 
@@ -116,52 +119,65 @@ if (!function_exists('table')) {
     {
 
         $table = new Table($data, $options);
+
         return $table->render();
     }
 }
 
-if (!function_exists('image')) {
+if (! function_exists('image')) {
     function image($source = null)
     {
         return new Image($source);
     }
 }
 
-if (!function_exists('page')) {
+if (! function_exists('page')) {
 
     class StyleSheet {}
 
     class Page
     {
-
-        static $instance = null;
+        public static $instance = null;
 
         public $stylesheets = [];
+
         public $styles = [];
+
         public $js = [];
+
         private $classes = [];
+
         private $_vite = [];
+
         public $heading = null;
+
         public $description = null;
+
         public $title = null;
 
         /** Arbitrary data exposed to the browser as window.app.data via the head. */
         private $_data = [];
 
         public $id;
+
         public $class;
+
         public $url;
+
         public $path;
+
         public $head = [];
 
-        function __construct($config = [])
+        public function __construct($config = [])
         {
 
             $this->url = request()->getRequestUri();
             $this->path = request()->getPathInfo();
-            $this->id = str_replace('/', '-', trim($this->path, "/"));
+            $this->id = str_replace('/', '-', trim($this->path, '/'));
 
-            if (!empty($config)) $this->apply($config);
+            if (! empty($config)) {
+                $this->apply($config);
+            }
         }
 
         public function apply($config = [])
@@ -238,18 +254,21 @@ if (!function_exists('page')) {
         public function setTitle($title)
         {
             $this->title = $title;
+
             return $this;
         }
 
         public function setHeading($heading)
         {
             $this->heading = $heading;
+
             return $this;
         }
 
         public function setDescription($description)
         {
             $this->description = $description;
+
             return $this;
         }
 
@@ -259,6 +278,7 @@ if (!function_exists('page')) {
         public function setData($key, $value)
         {
             $this->_data[$key] = $value;
+
             return $this;
         }
 
@@ -287,7 +307,6 @@ if (!function_exists('page')) {
             return json_encode($this->_data);
         }
 
-
         public function script($path)
         {
             $this->js[] = $path;
@@ -313,8 +332,9 @@ if (!function_exists('page')) {
         {
             $js = '';
             foreach ($this->js as $script) {
-                $js .= '<script src="' . $script . '"></script>';
+                $js .= '<script src="'.$script.'"></script>';
             }
+
             return $js;
         }
 
@@ -322,23 +342,24 @@ if (!function_exists('page')) {
         {
             $css = '';
             foreach ($this->stylesheets as $stylesheet) {
-                $css .= '<link rel="stylesheet" href="' . $stylesheet . '" />';
+                $css .= '<link rel="stylesheet" href="'.$stylesheet.'" />';
             }
             if ($this->styles) {
                 $css .= '<style>';
                 foreach ($this->styles as $selector => $style) {
-                    $css .= $selector . " {\n";
+                    $css .= $selector." {\n";
                     if (is_string($style)) {
                         $css .= $style;
                     } elseif (is_array($style)) {
                         foreach ($style as $property => $value) {
-                            $css .= "\t" . $property . ": " . $value . ";\n";
+                            $css .= "\t".$property.': '.$value.";\n";
                         }
                     }
-                    $css .= $selector . "}\n\n";
+                    $css .= $selector."}\n\n";
                 }
                 $css .= '</style>';
             }
+
             return $css;
         }
 
@@ -352,8 +373,8 @@ if (!function_exists('page')) {
                     return $this->renderJs();
                     break;
                 case 'head':
-                    if (!empty($this->head)) {
-                        return \Keystone\Toolkit\Helpers\VirtualDom\Render::html($this->head);
+                    if (! empty($this->head)) {
+                        return Render::html($this->head);
                     } else {
                         return '';
                     }
@@ -371,18 +392,18 @@ if (!function_exists('page')) {
         }
     }
 
-
-
     function page($config = null)
     {
-        if (!empty(Page::$instance)) {
-            if (!empty($config)) {
+        if (! empty(Page::$instance)) {
+            if (! empty($config)) {
                 Page::$instance->apply($config);
             }
+
             return Page::$instance;
         }
         $instance = new Page($config);
         Page::$instance = $instance;
+
         return $instance;
     }
 }

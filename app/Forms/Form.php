@@ -2,24 +2,27 @@
 
 namespace App\Forms;
 
-use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Vite;
 use App\Models\AppModel;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Vite;
 
 class Form
 {
-
     protected $method = 'POST';
+
     protected $actionRoute = '';
+
     protected $action = '';
+
     protected $data = [];
+
     protected $model = null;
+
     protected $schema = null;
 
     public function __construct($data = [])
     {
-        if (!empty($this->actionRoute)) {
+        if (! empty($this->actionRoute)) {
             $this->setActionRoute($this->actionRoute);
         }
 
@@ -29,6 +32,7 @@ class Form
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -36,31 +40,35 @@ class Form
     {
         $this->actionRoute = $actionRoute;
         $this->action = route($actionRoute);
+
         return $this;
     }
 
     public function setMethod($method)
     {
         $this->method = $method;
+
         return $this;
     }
-
 
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 
     public function setSchema($schema)
     {
         $this->schema = $schema;
+
         return $this;
     }
 
@@ -69,7 +77,7 @@ class Form
     public function fields()
     {
         if (empty($this->schema)) {
-            if (!empty($this->model)) {
+            if (! empty($this->model)) {
                 if ($this->model::hasSchema()) {
                     $this->schema = $this->model::getSchema();
                 }
@@ -97,8 +105,6 @@ class Form
             $value = $this->data[$key] ?? null;
         }
 
-
-
         return $this->schema['form'];
     }
 
@@ -112,18 +118,18 @@ class Form
 
         $fields = $this->fields();
 
-        //dd($fields);
+        // dd($fields);
 
         $rendered = [];
         $types = Arr::pluck($fields, 'type');
 
         $hasFile = in_array('file', $types);
-        $open = '<script type="module" src="' . Vite::asset('resources/js/forms.js') . '" ></script>';
-        $open .= '<form ' . ($hasFile ? ' enctype="multipart/form-data" ' : '') . ' method="' . $this->method . '" action="' . $this->action . '">';
+        $open = '<script type="module" src="'.Vite::asset('resources/js/forms.js').'" ></script>';
+        $open .= '<form '.($hasFile ? ' enctype="multipart/form-data" ' : '').' method="'.$this->method.'" action="'.$this->action.'">';
         array_push($rendered, $open);
 
         array_push($rendered, csrf_field());
-        //dd($this->data);
+        // dd($this->data);
         foreach ($fields as $key => $field) {
 
             $options = [
@@ -139,6 +145,7 @@ class Form
         $submit = view('components.form.submit', $this->submit())->render();
         array_push($rendered, $submit);
         array_push($rendered, '</form>');
+
         return Arr::join($rendered, "\n");
     }
 }

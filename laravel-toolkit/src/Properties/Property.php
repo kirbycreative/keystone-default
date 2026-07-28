@@ -4,8 +4,6 @@ namespace Keystone\Toolkit\Properties;
 
 class Property
 {
-
-
     protected $type = 'string';
 
     protected $fillable = true;
@@ -18,9 +16,9 @@ class Property
 
     protected $rules = [];
 
-    function __construct($propertyName = null, $label = null)
+    public function __construct($propertyName = null, $label = null)
     {
-        if (!empty($label)) {
+        if (! empty($label)) {
             $this->label = $label;
         } elseif ($propertyName) {
             $this->label = ucwords(str_replace('_', ' ', $propertyName));

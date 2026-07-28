@@ -42,5 +42,4 @@ class LoginController extends AdminController
 
         return redirect()->route('login');
     }
-
 }

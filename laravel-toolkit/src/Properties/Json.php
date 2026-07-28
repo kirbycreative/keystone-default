@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Json extends Property
 {
     public $type = 'json';
@@ -16,7 +13,7 @@ class Json extends Property
     public $cast = 'array';
 
     public $rules = [
-        'type' => 'json'
+        'type' => 'json',
     ];
 
     public function table()
@@ -26,5 +23,5 @@ class Json extends Property
         ];
     }
 
-    //public function accessor() {}
+    // public function accessor() {}
 }

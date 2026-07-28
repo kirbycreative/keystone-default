@@ -39,7 +39,7 @@ class GenerateJsModels extends Command
         $generated = 0;
 
         foreach (File::allFiles($modelsPath) as $file) {
-            $class = 'App\\Models\\' . $file->getFilenameWithoutExtension();
+            $class = 'App\\Models\\'.$file->getFilenameWithoutExtension();
 
             if (! class_exists($class)) {
                 continue;
@@ -57,7 +57,7 @@ class GenerateJsModels extends Command
             $jsName = $reflection->getShortName();
             $contents = $this->buildModel($jsName, $model, $baseImport);
 
-            File::put($outputPath . DIRECTORY_SEPARATOR . $jsName . '.mjs', $contents);
+            File::put($outputPath.DIRECTORY_SEPARATOR.$jsName.'.mjs', $contents);
             $this->info("Generated {$jsName}.mjs");
             $generated++;
         }

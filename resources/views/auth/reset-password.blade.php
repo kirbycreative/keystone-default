@@ -1,4 +1,6 @@
-<x-layouts.default title="Choose your password">
+<?php page()->id = 'reset-password'; ?>
+
+<x-layouts.kc-default title="Choose your password">
     <main><h1>Choose your password</h1>
     <form method="POST" action="{{ route('password.update') }}">@csrf
         <input type="hidden" name="token" value="{{ $token }}">
@@ -8,4 +10,4 @@
         @foreach ($errors->all() as $error) <p>{{ $error }}</p> @endforeach
         <button type="submit">Save password</button>
     </form></main>
-</x-layouts.default>
+</x-layouts.kc-default>

@@ -14,7 +14,10 @@ use Illuminate\View\View;
 
 class PasswordResetController extends Controller
 {
-    public function request(): View { return view('auth.forgot-password'); }
+    public function request(): View
+    {
+        return view('auth.forgot-password');
+    }
 
     public function email(Request $request): RedirectResponse
     {

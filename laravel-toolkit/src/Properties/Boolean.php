@@ -2,9 +2,6 @@
 
 namespace Keystone\Toolkit\Properties;
 
-use Keystone\Toolkit\Properties\Property;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-
 class Boolean extends Property
 {
     public $type = 'boolean';
@@ -20,7 +17,7 @@ class Boolean extends Property
 
     public $options = [
         'No' => 0,
-        'Yes' => 1
+        'Yes' => 1,
     ];
 
     public function table()
@@ -28,12 +25,11 @@ class Boolean extends Property
         return [];
     }
 
-
     public function form()
     {
         return [
             'type' => 'select',
-            'options' => $this->options
+            'options' => $this->options,
         ];
     }
 }

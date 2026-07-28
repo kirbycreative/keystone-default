@@ -19,7 +19,8 @@ class AdminPanelTest extends TestCase
 
     public function test_guest_lands_on_login_before_admin_panel(): void
     {
-        $this->get('/')->assertRedirect(route('admin.dashboard'));
+        $this->fakePublishedSite();
+        $this->get('/')->assertOk()->assertViewIs('site.page');
         $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
         $this->get(route('login'))
             ->assertOk()
@@ -47,6 +48,7 @@ class AdminPanelTest extends TestCase
 
     public function test_user_can_log_in_and_reach_admin_dashboard(): void
     {
+        $this->fakePublishedSite();
         User::factory()->create([
             'email' => 'owner@example.com',
             'password' => 'password',
@@ -57,7 +59,7 @@ class AdminPanelTest extends TestCase
             'password' => 'password',
         ])->assertRedirect(route('admin.dashboard'));
 
-        $this->get('/')->assertRedirect(route('admin.dashboard'));
+        $this->get('/')->assertOk()->assertViewIs('site.page');
         $this->get(route('admin.dashboard'))->assertOk()->assertSee('Admin Dashboard');
     }
 
@@ -566,5 +568,29 @@ class AdminPanelTest extends TestCase
             ])
             ->assertRedirect(route('admin.page-suggestions.index'))
             ->assertSessionHasErrors('rejection_feedback');
+    }
+
+    private function fakePublishedSite(): void
+    {
+        config([
+            'app.url' => 'https://client.example',
+            'services.keystone.url' => 'https://kirbycreative.co/api',
+            'services.keystone.token' => 'site-token',
+        ]);
+        Http::fake(['*/site-schema/published' => Http::response([
+            'site_version' => [
+                'version' => 1,
+                'document' => [
+                    'pages' => [[
+                        'id' => 'page_home',
+                        'path' => '/',
+                        'title' => 'Home',
+                        'status' => 'enabled',
+                        'seo' => ['title' => 'Home'],
+                        'sections' => [],
+                    ]],
+                ],
+            ],
+        ])]);
     }
 }

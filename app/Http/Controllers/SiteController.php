@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Keystone\Toolkit\Services\KeystoneApiService;
+use RuntimeException;
 
 class SiteController extends Controller
 {
@@ -18,7 +19,16 @@ class SiteController extends Controller
         CanonicalSiteRenderer $renderer,
         ?string $path = null,
     ): View|RedirectResponse {
-        $version = $this->published($api);
+        try {
+            $version = $this->published($api);
+        } catch (RuntimeException $exception) {
+            if ($this->siteHasNotBeenPublished($exception)) {
+                return redirect()->route('login');
+            }
+
+            throw $exception;
+        }
+
         if ($redirect = $this->canonicalRedirect($request, $version)) {
             return $redirect;
         }
@@ -64,7 +74,7 @@ class SiteController extends Controller
     {
         try {
             $page = $renderer->page($version, $path);
-        } catch (\RuntimeException) {
+        } catch (RuntimeException) {
             abort(404);
         }
         $canonicalUrl = $this->primaryUrl($version).($page['path'] === '/' ? '' : $page['path']);
@@ -85,6 +95,12 @@ class SiteController extends Controller
             now()->addMinutes(5),
             fn (): array => data_get($api->siteSchemaPublished(), 'site_version', []),
         );
+    }
+
+    private function siteHasNotBeenPublished(RuntimeException $exception): bool
+    {
+        return str_contains($exception->getMessage(), 'Kirby Creative API request failed (404):')
+            && str_contains($exception->getMessage(), 'This site has not been published.');
     }
 
     private function primaryUrl(array $version): string

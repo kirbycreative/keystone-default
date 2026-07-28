@@ -30,6 +30,18 @@ class ExampleTest extends TestCase
             ->assertDontSee('Admin Dashboard');
     }
 
+    public function test_an_unpublished_new_site_sends_the_owner_to_login(): void
+    {
+        $this->configureApi();
+        Http::fake([
+            '*/site-schema/published' => Http::response([
+                'message' => 'This site has not been published.',
+            ], 404),
+        ]);
+
+        $this->get('/')->assertRedirect(route('login'));
+    }
+
     public function test_preview_and_public_site_use_the_same_renderer_with_different_versions(): void
     {
         $this->configureApi();

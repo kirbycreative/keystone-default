@@ -47,7 +47,7 @@ class PasswordResetTest extends TestCase
         $this->assertCredentials(['email' => $user->email, 'password' => 'new-secure-password']);
     }
 
-    public function test_health_endpoint_checks_runtime_dependencies(): void
+    public function test_health_endpoint_checks_the_application_database(): void
     {
         $this->getJson(route('health'))->assertOk()->assertJson(['status' => 'ok']);
     }

@@ -14,7 +14,6 @@ use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TemplateViewerController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 Route::get('/', [SiteController::class, 'public'])->name('home');
 Route::get('/robots.txt', [SiteController::class, 'robots'])->name('robots');
@@ -29,8 +28,6 @@ Route::get('/sitemap.xml', [SiteController::class, 'sitemap'])->name('sitemap');
 
 Route::get('/health', function () {
     DB::select('select 1');
-    Storage::disk(config('filesystems.default'))->put('.healthcheck', now()->toIso8601String());
-    Storage::disk(config('filesystems.default'))->delete('.healthcheck');
 
     return response()->json(['status' => 'ok']);
 })->name('health');

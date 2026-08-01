@@ -1,15 +1,21 @@
+# syntax=docker/dockerfile:1.7
+
+FROM composer:2 AS php-dependencies
+WORKDIR /app
+RUN apk add --no-cache git openssh-client \
+    && install -d -m 0700 /root/.ssh \
+    && ssh-keyscan -p 443 ssh.github.com >> /root/.ssh/known_hosts
+COPY composer.json composer.lock ./
+RUN --mount=type=ssh composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
 FROM node:22-alpine AS frontend
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+COPY --from=php-dependencies /app/vendor vendor
 COPY resources resources
 COPY vite.config.js ./
 RUN npm run build
-
-FROM composer:2 AS php-dependencies
-WORKDIR /app
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 FROM php:8.4-fpm-alpine
 RUN apk add --no-cache nginx supervisor libzip-dev icu-dev oniguruma-dev sqlite-dev \

@@ -57,6 +57,15 @@ Production deployments should use `git submodule update --init --recursive`
 without `--remote`. This installs the exact Juice commit pinned by this
 repository.
 
+The production image installs the private `kirbycreative/keystone-toolkit`
+Composer package using BuildKit SSH forwarding. Configure the repository
+secret `KEYSTONE_TOOLKIT_SSH_KEY` with a read-only deploy key for that package.
+For local builds, load the same authorized key into your SSH agent and run:
+
+```bash
+docker build --ssh default -t keystone-client .
+```
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.

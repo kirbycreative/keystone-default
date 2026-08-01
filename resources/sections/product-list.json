@@ -1,0 +1,22 @@
+{
+    "key": "product-list",
+    "name": "Product List",
+    "section_type": "products",
+    "category": "Commerce",
+    "blade_view": "sections.product-list",
+    "css_path": "resources/scss/sections/product-list.scss",
+    "schema": {
+        "fields": []
+    },
+    "settings": [],
+    "supports": {
+        "in_page_editing": false,
+        "repeaters": false,
+        "images": false,
+        "dynamic_source": "stripe_products"
+    },
+    "package": {
+        "version": 1,
+        "checksum": "bbced004397c1de2468fb84b75066365cd3f934453ede865f57db6343be7e9b0"
+    }
+}

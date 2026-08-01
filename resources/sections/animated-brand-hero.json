@@ -1,0 +1,50 @@
+{
+    "key": "animated-brand-hero",
+    "name": "Animated Brand Hero",
+    "section_type": "hero",
+    "category": "Hero",
+    "blade_view": "sections.animated-brand-hero",
+    "css_path": "resources/scss/sections/animated-brand-hero.scss",
+    "schema": {
+        "fields": {
+            "heading": {
+                "type": "text",
+                "required": true,
+                "maxLength": 40
+            },
+            "rotating_words": {
+                "type": "repeater",
+                "required": true,
+                "minItems": 1,
+                "maxItems": 12,
+                "fields": {
+                    "value": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 30
+                    }
+                }
+            },
+            "body": {
+                "type": "textarea",
+                "required": true,
+                "maxLength": 360
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier",
+            "default": "hero"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": true,
+        "images": false
+    },
+    "package": {
+        "version": 1,
+        "checksum": "fd89ce5220a9b51fec0ba969f295c8edb66b02ed40b2e72b2c4e9fc1a654b96b"
+    }
+}

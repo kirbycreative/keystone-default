@@ -1,0 +1,8 @@
+.ai-trial-section { display: grid; grid-template-columns: minmax(0, .9fr) minmax(320px, .62fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; color: var(--primary-text); }
+.ai-trial-callout { display: grid; gap: .85rem; padding: clamp(1.25rem, 3vw, 1.75rem); border: 1px solid rgb(0 51 102 / 14%); border-radius: 8px; background: rgb(255 255 255 / 72%); box-shadow: 0 24px 70px rgb(17 24 39 / 16%); }
+#ai-free { color: var(--ink); }
+#ai-free .eyebrow, #ai-free .ai-trial-callout span { color: #006f67; }
+#ai-free .ai-trial-logo { display: block; width: min(320px, 78vw); height: auto; margin-bottom: 1.25rem; }
+#ai-free h2, #ai-free .ai-trial-callout h3 { color: var(--navy); }
+#ai-free p, #ai-free .ai-trial-callout p { color: var(--ink); }
+@media (max-width: 920px) { .ai-trial-section { grid-template-columns: 1fr; } }

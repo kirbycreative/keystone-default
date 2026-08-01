@@ -7,17 +7,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "keystone/laravel-toolkit": "^1.0",
+        "keystone/admin": "dev-main",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1"
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "./laravel-toolkit",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "ssh://git@ssh.github.com:443/kirbycreative/keystone-toolkit.git"
         }
     ],
     "require-dev": {
@@ -34,7 +31,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Http/Helpers/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -64,10 +64,13 @@
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force"
+            "@php artisan vendor:publish --tag=keystone-assets --ansi --force",
+            "@php artisan keystone:sections:install --ansi"
         ],
         "post-install-cmd": [
-            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force"
+            "@php artisan vendor:publish --tag=keystone-assets --ansi --force",
+            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force",
+            "@php artisan keystone:sections:install --ansi"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

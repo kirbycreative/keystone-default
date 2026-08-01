@@ -12,41 +12,50 @@ class MediaLibraryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_editor_can_upload_and_list_only_public_images(): void
+    public function test_editor_can_upload_and_list_package_owned_cdn_images(): void
     {
         Storage::fake('s3');
-        config(['keystone.client_assets.disk' => 's3']);
+        config([
+            'keystone.media.disk' => 's3',
+            'keystone.site_key' => 'client-99',
+        ]);
         $editor = User::factory()->create(['onboarded' => true, 'role' => User::ROLE_EDITOR]);
 
-        Storage::disk('s3')->put('99/private/secret.png', 'private');
-        Storage::disk('s3')->put('99/public/media/existing.jpg', 'existing');
-
-        $uploaded = $this->actingAs($editor)->postJson(route('admin.media-library.store'), [
-            'file' => UploadedFile::fake()->create('hero.png', 128, 'image/png'),
+        $uploaded = $this->actingAs($editor)->postJson(route('keystone.admin.media.store'), [
+            'image' => $this->png('hero.png'),
         ])->assertCreated()->json('asset');
 
-        $this->assertStringStartsWith($editor->id.'/public/media/', $uploaded['path']);
+        $this->assertStringStartsWith('client-sites/client-99/media/', $uploaded['path']);
         Storage::disk('s3')->assertExists($uploaded['path']);
 
         $response = $this->actingAs($editor)
-            ->getJson(route('admin.media-library.index'))
+            ->getJson(route('keystone.admin.media.index'))
             ->assertOk();
 
         $paths = collect($response->json('assets'))->pluck('path');
-        $this->assertTrue($paths->contains('99/public/media/existing.jpg'));
         $this->assertTrue($paths->contains($uploaded['path']));
-        $this->assertFalse($paths->contains('99/private/secret.png'));
     }
 
     public function test_viewer_can_browse_but_cannot_upload_media(): void
     {
         Storage::fake('s3');
-        config(['keystone.client_assets.disk' => 's3']);
+        config([
+            'keystone.media.disk' => 's3',
+            'keystone.site_key' => 'client-99',
+        ]);
         $viewer = User::factory()->create(['onboarded' => true, 'role' => User::ROLE_VIEWER]);
 
-        $this->actingAs($viewer)->getJson(route('admin.media-library.index'))->assertOk();
-        $this->actingAs($viewer)->postJson(route('admin.media-library.store'), [
-            'file' => UploadedFile::fake()->create('blocked.png', 128, 'image/png'),
+        $this->actingAs($viewer)->getJson(route('keystone.admin.media.index'))->assertOk();
+        $this->actingAs($viewer)->postJson(route('keystone.admin.media.store'), [
+            'image' => $this->png('blocked.png'),
         ])->assertForbidden();
+    }
+
+    private function png(string $name): UploadedFile
+    {
+        return UploadedFile::fake()->createWithContent(
+            $name,
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', true),
+        );
     }
 }

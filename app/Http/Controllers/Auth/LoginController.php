@@ -29,8 +29,9 @@ class LoginController extends AdminController
         }
 
         $request->session()->regenerate();
+        $request->session()->put('mfa_passed', false);
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended(route('keystone.admin.dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse

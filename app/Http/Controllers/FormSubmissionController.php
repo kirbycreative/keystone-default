@@ -7,7 +7,7 @@ use App\Services\CanonicalSiteRenderer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Keystone\Toolkit\Services\KeystoneApiService;
+use Keystone\Admin\Services\KeystoneApiService;
 
 class FormSubmissionController extends Controller
 {

@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use Keystone\Admin\Contracts\ValidatesSitePublication;
 use RuntimeException;
 
-class CanonicalSiteRenderer
+class CanonicalSiteRenderer implements ValidatesSitePublication
 {
     /** @return array<string, mixed> */
     public function rootPage(array $siteVersion): array

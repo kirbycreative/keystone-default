@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Keystone\Toolkit\Services\KeystoneApiService;
-use Keystone\Toolkit\Traits\HasClientAssets;
+use Keystone\Admin\Contracts\ManagesKeystoneSite;
+use Keystone\Admin\Models\ContentAsset;
+use Keystone\Admin\Models\Onboarding;
+use Keystone\Admin\Models\PageSuggestion;
+use Keystone\Admin\Services\KeystoneApiService;
+use Keystone\Admin\Traits\HasClientAssets;
 
-class User extends Authenticatable
+class User extends Authenticatable implements ManagesKeystoneSite
 {
     public const ROLE_OWNER = 'owner';
 
@@ -34,6 +38,8 @@ class User extends Authenticatable
         'password',
         'onboarded',
         'role',
+        'mfa_secret',
+        'mfa_confirmed_at',
     ];
 
     /**
@@ -44,6 +50,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'mfa_secret',
     ];
 
     /**
@@ -57,6 +64,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'onboarded' => 'boolean',
+            'mfa_secret' => 'encrypted',
+            'mfa_confirmed_at' => 'datetime',
         ];
     }
 
@@ -91,6 +100,21 @@ class User extends Authenticatable
     public function canPublishSite(): bool
     {
         return $this->role === self::ROLE_OWNER;
+    }
+
+    public function canAccessKeystoneAdmin(): bool
+    {
+        return true;
+    }
+
+    public function canEditKeystoneSite(): bool
+    {
+        return $this->canEditSite();
+    }
+
+    public function canPublishKeystoneSite(): bool
+    {
+        return $this->canPublishSite();
     }
 
     public function sendPasswordResetNotification($token): void

@@ -1,0 +1,36 @@
+{
+    "key": "generic-content",
+    "name": "Generic Content",
+    "section_type": "content",
+    "category": "Content",
+    "blade_view": "sections.generic-content",
+    "css_path": "resources/scss/sections/generic-content.scss",
+    "schema": {
+        "fields": {
+            "heading": {
+                "type": "text",
+                "required": false,
+                "maxLength": 180
+            },
+            "body": {
+                "type": "textarea",
+                "required": false,
+                "maxLength": 5000
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": false,
+        "images": false
+    },
+    "package": {
+        "version": 1,
+        "checksum": "8983d8805d188c0890512b79fb7043a60cb0533d934b94508dbde6d0ed5bd651"
+    }
+}

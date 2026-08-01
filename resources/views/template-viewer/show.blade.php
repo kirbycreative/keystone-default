@@ -2,24 +2,24 @@
     <div class="w:container maxw:xl">
         <div class="page-head">
             <div>
-                <a href="{{ route('admin.templates.index') }}" class="link-accent font-size:0o9">&larr; Back to templates</a>
-                <h1 class="margin:top:0o5">{{ $name }}</h1>
-                <p class="muted margin:0">{{ $relativePath }}</p>
+                <a href="{{ route('admin.templates.index') }}" class="link-accent font-size:0rem.9rem">&larr; Back to templates</a>
+                <h1 class="margin:top:0rem.5rem">{{ $name }}</h1>
+                <p class="muted margin:0rem">{{ $relativePath }}</p>
             </div>
             <a href="{{ route('admin.templates.index') }}" class="btn btn--ghost btn--sm">List view</a>
         </div>
 
-        <div class="panel margin:top:1">
-            <div class="flex:row items-wrap gap:1">
+        <div class="panel margin:top:1rem">
+            <div class="flex:row items-wrap gap:1rem">
                 <span class="badge">{{ Str::contains($relativePath, '/') ? explode('/', $relativePath)[0] : $relativePath }}</span>
-                <span class="muted font-size:0o9">{{ strlen($content) }} characters</span>
-                <span class="muted font-size:0o9">{{ substr_count($content, "\n") + 1 }} lines</span>
+                <span class="muted font-size:0rem.9rem">{{ strlen($content) }} characters</span>
+                <span class="muted font-size:0rem.9rem">{{ substr_count($content, "\n") + 1 }} lines</span>
             </div>
         </div>
 
-        <div class="code-viewer margin:top:1">
+        <div class="code-viewer margin:top:1rem">
             <div class="code-viewer__toolbar">
-                <div class="flex:row align:center gap:0o5">
+                <div class="flex:row align:center gap:0rem.5rem">
                     <label for="theme">Theme:</label>
                     <select id="theme" class="admin-field admin-select" style="width:auto;padding:.4rem .6rem;">
                         <option value="github">GitHub Light</option>
@@ -31,11 +31,11 @@
                     </select>
                 </div>
 
-                <div class="flex:row align:center gap:1 margin:left:auto">
-                    <label class="flex:row align:center gap:0o5 muted">
+                <div class="flex:row align:center gap:1rem margin:left:auto">
+                    <label class="flex:row align:center gap:0rem.5rem muted">
                         <input type="checkbox" id="wrapLines"> Wrap lines
                     </label>
-                    <label class="flex:row align:center gap:0o5 muted">
+                    <label class="flex:row align:center gap:0rem.5rem muted">
                         <input type="checkbox" id="showLineNumbers" checked> Line numbers
                     </label>
                     <button type="button" id="copyBtn" class="btn btn--ghost btn--sm">Copy code</button>

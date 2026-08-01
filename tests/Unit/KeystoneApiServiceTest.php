@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
-use Keystone\Toolkit\Services\KeystoneApiService;
+use Keystone\Admin\Services\KeystoneApiService;
 use Tests\TestCase;
 
 class KeystoneApiServiceTest extends TestCase

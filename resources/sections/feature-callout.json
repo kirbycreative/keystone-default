@@ -1,0 +1,80 @@
+{
+    "key": "feature-callout",
+    "name": "Feature Callout",
+    "section_type": "callout",
+    "category": "Marketing",
+    "blade_view": "sections.feature-callout",
+    "css_path": "resources/scss/sections/feature-callout.scss",
+    "schema": {
+        "fields": {
+            "image": {
+                "type": "image",
+                "required": true,
+                "role": "logo"
+            },
+            "image_alt": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "eyebrow": {
+                "type": "text",
+                "required": true,
+                "maxLength": 80
+            },
+            "heading": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "body": {
+                "type": "textarea",
+                "required": true,
+                "maxLength": 360
+            },
+            "callout": {
+                "type": "group",
+                "fields": {
+                    "eyebrow": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 100
+                    },
+                    "heading": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 160
+                    },
+                    "body": {
+                        "type": "textarea",
+                        "required": true,
+                        "maxLength": 360
+                    },
+                    "url": {
+                        "type": "link",
+                        "required": true
+                    },
+                    "label": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 60
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": false,
+        "images": true
+    },
+    "package": {
+        "version": 1,
+        "checksum": "ff79ae56e2fe5b1e4197efbc412981228fb827e414b94e5b365611721007db52"
+    }
+}

@@ -25,7 +25,7 @@ class ExampleTest extends TestCase
             ->assertOk()
             ->assertViewIs('site.page')
             ->assertSee('Published homepage')
-            ->assertDontSee(route('admin.dashboard'))
+            ->assertDontSee(route('keystone.admin.dashboard'))
             ->assertDontSee(route('login'))
             ->assertDontSee('Admin Dashboard');
     }
@@ -144,6 +144,7 @@ class ExampleTest extends TestCase
                     'sections' => [[
                         'id' => 'section_hero',
                         'type' => 'hero',
+                        'template' => 'generic-content',
                         'enabled' => true,
                         'content' => ['heading' => $heading],
                     ]],
@@ -156,6 +157,7 @@ class ExampleTest extends TestCase
                     'sections' => [[
                         'id' => 'section_about',
                         'type' => 'content',
+                        'template' => 'generic-content',
                         'enabled' => true,
                         'content' => ['heading' => 'About us'],
                     ]],
@@ -168,6 +170,7 @@ class ExampleTest extends TestCase
                     'sections' => [[
                         'id' => 'section_contact',
                         'type' => 'contact',
+                        'template' => 'generic-content',
                         'enabled' => true,
                         'content' => ['heading' => 'Contact us'],
                     ]],

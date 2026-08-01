@@ -2,7 +2,6 @@ FROM node:22-alpine AS frontend
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
-COPY laravel-toolkit laravel-toolkit
 COPY resources resources
 COPY vite.config.js ./
 RUN npm run build
@@ -10,7 +9,6 @@ RUN npm run build
 FROM composer:2 AS php-dependencies
 WORKDIR /app
 COPY composer.json composer.lock ./
-COPY laravel-toolkit laravel-toolkit
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 FROM php:8.4-fpm-alpine

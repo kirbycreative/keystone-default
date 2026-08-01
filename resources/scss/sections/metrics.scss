@@ -1,0 +1,7 @@
+.proof-section { background: #008f86; }
+.proof-section .container { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.metric { padding: 1.4rem; border: 1px solid rgb(255 255 255 / 24%); border-radius: 8px; background: rgb(255 255 255 / 10%); }
+.metric strong { display: block; color: white; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; } .metric span { color: rgb(255 255 255 / 84%); font-weight: 700; }
+.proof-title { grid-column: 1 / -1; max-width: 980px; margin: clamp(1.75rem, 4vw, 3rem) auto 0; color: white; font-size: clamp(1.6rem, 3vw, 2.8rem); font-weight: 800; line-height: 1.38; text-align: center; }
+@media (max-width: 920px) { .proof-section .container { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .proof-section .container { grid-template-columns: 1fr; } }

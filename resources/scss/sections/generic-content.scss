@@ -1,0 +1,8 @@
+.generic-content-section {
+    padding: clamp(3rem, 7vw, 6rem) 5vw;
+}
+
+.generic-content-section .container {
+    width: min(100%, 72rem);
+    margin-inline: auto;
+}

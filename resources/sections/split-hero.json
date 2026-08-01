@@ -1,0 +1,69 @@
+{
+    "key": "split-hero",
+    "name": "Split Image Hero",
+    "section_type": "hero",
+    "category": "Hero",
+    "blade_view": "sections.split-hero",
+    "css_path": "resources/scss/sections/split-hero.scss",
+    "schema": {
+        "fields": {
+            "image": {
+                "type": "image",
+                "required": true,
+                "role": "primary"
+            },
+            "image_alt": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "eyebrow": {
+                "type": "text",
+                "required": true,
+                "maxLength": 100
+            },
+            "heading": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "body": {
+                "type": "textarea",
+                "required": true,
+                "maxLength": 500
+            },
+            "actions": {
+                "type": "repeater",
+                "maxItems": 3,
+                "fields": {
+                    "label": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 60
+                    },
+                    "url": {
+                        "type": "link",
+                        "required": true
+                    },
+                    "style": {
+                        "type": "select",
+                        "options": [
+                            "primary",
+                            "secondary"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "settings": [],
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": true,
+        "images": true
+    },
+    "package": {
+        "version": 1,
+        "checksum": "8c8e71a538ea7812b5494fb61dcf5a009a13c325b7b207dbb7ad41308343797a"
+    }
+}

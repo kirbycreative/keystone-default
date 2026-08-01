@@ -1,0 +1,56 @@
+{
+    "key": "lead-form",
+    "name": "Lead Form",
+    "section_type": "form",
+    "category": "Forms",
+    "blade_view": "sections.lead-form",
+    "css_path": "resources/scss/sections/lead-form.scss",
+    "schema": {
+        "fields": {
+            "eyebrow": {
+                "type": "text",
+                "required": true,
+                "maxLength": 80
+            },
+            "heading": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "body": {
+                "type": "textarea",
+                "required": true,
+                "maxLength": 500
+            },
+            "form_slug": {
+                "type": "form",
+                "required": true
+            },
+            "contact_email": {
+                "type": "email",
+                "required": true
+            },
+            "contact_note": {
+                "type": "text",
+                "required": true,
+                "maxLength": 240
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier",
+            "default": "lead"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": false,
+        "images": false,
+        "forms": true
+    },
+    "package": {
+        "version": 1,
+        "checksum": "9a042633f5ff2536d7fd7ca7aefe2a9bb3cf4b33658879961e86afb1b1693aac"
+    }
+}

@@ -1,0 +1,52 @@
+{
+    "key": "metrics",
+    "name": "Metrics",
+    "section_type": "statistics",
+    "category": "Proof",
+    "blade_view": "sections.metrics",
+    "css_path": "resources/scss/sections/metrics.scss",
+    "schema": {
+        "fields": {
+            "metrics": {
+                "type": "repeater",
+                "required": true,
+                "minItems": 1,
+                "maxItems": 6,
+                "fields": {
+                    "value": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 20
+                    },
+                    "label": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 80
+                    }
+                }
+            },
+            "heading": {
+                "type": "rich_text",
+                "required": true,
+                "maxLength": 220,
+                "allowedTags": [
+                    "br"
+                ]
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": true,
+        "images": false
+    },
+    "package": {
+        "version": 1,
+        "checksum": "1a4e94942f4fcdd3db03a93172cfaa2ad34a251e269c7ead96f3a3f5b499e58f"
+    }
+}

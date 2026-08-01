@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3d100165cd39d6589ad71b7b648e11a",
+    "content-hash": "9a9e85a50aceec57cc2c4f36e8c4428c",
     "packages": [
         {
             "name": "brick/math",
@@ -1059,43 +1059,46 @@
             "time": "2026-07-17T13:53:03+00:00"
         },
         {
-            "name": "keystone/laravel-toolkit",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "./laravel-toolkit",
-                "reference": "d8265fd64b7ce2169bb396b72278af46a3065998"
+            "name": "keystone/admin",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "ssh://git@ssh.github.com:443/kirbycreative/keystone-toolkit.git",
+                "reference": "846eac0ceabae6850458d75e11250ce219bea1aa"
             },
             "require": {
                 "illuminate/database": "^12.0",
+                "illuminate/filesystem": "^12.0",
+                "illuminate/http": "^12.0",
+                "illuminate/routing": "^12.0",
                 "illuminate/support": "^12.0",
                 "illuminate/view": "^12.0",
                 "php": "^8.2"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Keystone\\Toolkit\\ToolkitServiceProvider"
+                        "Keystone\\Admin\\KeystoneServiceProvider"
                     ]
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Keystone\\Toolkit\\": "src/"
+                    "Keystone\\Admin\\": "src/Admin/",
+                    "Keystone\\Admin\\Foundation\\": "src/Admin/Foundation/"
                 },
                 "files": [
-                    "src/Helpers/Helper.php"
+                    "src/Admin/Foundation/Helpers/Helper.php",
+                    "src/Admin/Support/helpers.php"
                 ]
             },
             "license": [
                 "proprietary"
             ],
-            "description": "Reusable Laravel models, properties, forms, views, and UI assets.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "description": "Protected Keystone admin components and utilities for managed Laravel sites.",
+            "time": "2026-08-01T21:46:28+00:00"
         },
         {
             "name": "laravel/framework",
@@ -8423,7 +8426,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "keystone/admin": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

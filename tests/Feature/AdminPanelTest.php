@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\ContentAsset;
-use App\Models\Onboarding;
-use App\Models\PageSuggestion;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Keystone\Admin\Models\ContentAsset;
+use Keystone\Admin\Models\Onboarding;
+use Keystone\Admin\Models\PageSuggestion;
+use Keystone\Admin\Services\Totp;
 use Tests\TestCase;
 
 class AdminPanelTest extends TestCase
@@ -21,7 +22,7 @@ class AdminPanelTest extends TestCase
     {
         $this->fakePublishedSite();
         $this->get('/')->assertOk()->assertViewIs('site.page');
-        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('keystone.admin.dashboard'))->assertRedirect(route('login'));
         $this->get(route('login'))
             ->assertOk()
             ->assertSee('<input-text name="email"', false)
@@ -46,7 +47,7 @@ class AdminPanelTest extends TestCase
         $this->assertStringContainsString('https://client.example.test/build/assets/', $response->getContent());
     }
 
-    public function test_user_can_log_in_and_reach_admin_dashboard(): void
+    public function test_user_must_verify_mfa_after_logging_in(): void
     {
         $this->fakePublishedSite();
         User::factory()->create([
@@ -57,10 +58,37 @@ class AdminPanelTest extends TestCase
         $this->post(route('login.store'), [
             'email' => 'owner@example.com',
             'password' => 'password',
-        ])->assertRedirect(route('admin.dashboard'));
+        ])->assertRedirect(route('keystone.admin.dashboard'));
 
         $this->get('/')->assertOk()->assertViewIs('site.page');
-        $this->get(route('admin.dashboard'))->assertOk()->assertSee('Admin Dashboard');
+        $this->get(route('keystone.admin.dashboard'))->assertRedirect(route('keystone.admin.mfa.challenge'));
+    }
+
+    public function test_new_client_admin_must_set_up_mfa_before_onboarding(): void
+    {
+        $user = User::factory()->create([
+            'onboarded' => false,
+            'mfa_secret' => null,
+            'mfa_confirmed_at' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('keystone.admin.onboarding.show'))
+            ->assertRedirect(route('keystone.admin.mfa.setup'));
+
+        $setup = $this->get(route('keystone.admin.mfa.setup'))
+            ->assertOk()
+            ->assertSee('Set up multi-factor authentication')
+            ->assertSee('data-mfa-qr', false)
+            ->assertSee('<two-factor-input', false);
+
+        $user->refresh();
+        $code = app(Totp::class)->code($user->mfa_secret);
+
+        $this->post(route('keystone.admin.mfa.confirm'), ['code' => $code])
+            ->assertRedirect(route('keystone.admin.onboarding.show'));
+
+        $this->assertNotNull($user->fresh()->mfa_confirmed_at);
     }
 
     public function test_header_hides_admin_navigation_until_onboarding_is_complete(): void
@@ -68,9 +96,9 @@ class AdminPanelTest extends TestCase
         $user = User::factory()->create(['onboarded' => false]);
 
         $this->actingAs($user)
-            ->get(route('admin.onboarding'))
+            ->get(route('keystone.admin.onboarding.show'))
             ->assertOk()
-            ->assertSee('href="'.route('admin.onboarding').'" class="logo"', false)
+            ->assertSee('href="'.route('keystone.admin.onboarding.show').'" class="logo"', false)
             ->assertDontSee('>Dashboard<', false)
             ->assertDontSee('>Content<', false)
             ->assertDontSee('>Review<', false)
@@ -84,7 +112,7 @@ class AdminPanelTest extends TestCase
         $user = User::factory()->create(['onboarded' => false]);
 
         $this->actingAs($user)
-            ->get(route('admin.onboarding'))
+            ->get(route('keystone.admin.onboarding.show'))
             ->assertOk()
             ->assertSeeInOrder([
                 'About the company',
@@ -108,7 +136,7 @@ class AdminPanelTest extends TestCase
             ->assertSee('name="existing_brand_assets"', false);
 
         $this->actingAs($user)
-            ->postJson(route('admin.onboarding.brand'), [
+            ->postJson(route('keystone.admin.onboarding.brand'), [
                 'company_name' => 'Northstar Coffee',
                 'business_category' => 'Specialty coffee shop',
                 'company_description' => 'Small-batch coffee with neighborhood hospitality.',
@@ -148,7 +176,7 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->postJson(route('admin.onboarding.inspiration'), [
+            ->postJson(route('keystone.admin.onboarding.inspiration'), [
                 'inspiration_domains' => ['https://example.com/menu'],
             ])
             ->assertOk()
@@ -206,8 +234,8 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->post(route('admin.onboarding.complete'))
-            ->assertRedirect(route('admin.dashboard'));
+            ->post(route('keystone.admin.onboarding.complete'))
+            ->assertRedirect(route('keystone.admin.dashboard'));
 
         Http::assertSent(function (ClientRequest $request): bool {
             $payload = $request->data();
@@ -252,9 +280,9 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from(route('admin.onboarding'))
-            ->post(route('admin.onboarding.complete'))
-            ->assertRedirect(route('admin.onboarding'))
+            ->from(route('keystone.admin.onboarding.show'))
+            ->post(route('keystone.admin.onboarding.complete'))
+            ->assertRedirect(route('keystone.admin.onboarding.show'))
             ->assertSessionHasErrors('onboarding');
 
         Http::assertNothingSent();
@@ -291,7 +319,7 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('admin.onboarding'))
+            ->get(route('keystone.admin.onboarding.show'))
             ->assertOk();
 
         $asset->refresh();
@@ -311,14 +339,14 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('admin.content.index'))
-            ->assertRedirect(route('admin.dashboard'))
+            ->get(route('keystone.admin.content.index'))
+            ->assertRedirect(route('keystone.admin.dashboard'))
             ->assertSessionHasErrors('build');
 
         $onboarding->update(['generation_stage' => 'content_ready']);
 
         $this->actingAs($user)
-            ->get(route('admin.content.index'))
+            ->get(route('keystone.admin.content.index'))
             ->assertOk();
     }
 
@@ -331,13 +359,13 @@ class AdminPanelTest extends TestCase
         $file = UploadedFile::fake()->create('summer-menu.pdf', 128, 'application/pdf');
 
         $this->actingAs($user)
-            ->post(route('admin.content.store'), [
+            ->post(route('keystone.admin.content.store'), [
                 'title' => 'Summer Menu',
                 'type' => 'menu',
                 'notes' => 'Use this for menu sections and seasonal copy.',
                 'asset' => $file,
             ])
-            ->assertRedirect(route('admin.content.index'));
+            ->assertRedirect(route('keystone.admin.content.index'));
 
         $asset = ContentAsset::firstOrFail();
 
@@ -348,7 +376,7 @@ class AdminPanelTest extends TestCase
         Storage::disk('local')->assertExists($asset->path);
 
         $this->actingAs($user)
-            ->get(route('admin.content.download', $asset))
+            ->get(route('keystone.admin.content.download', $asset))
             ->assertOk();
     }
 
@@ -358,13 +386,13 @@ class AdminPanelTest extends TestCase
         $user = User::factory()->create(['onboarded' => true]);
 
         $this->actingAs($user)
-            ->from(route('admin.content.index'))
-            ->post(route('admin.content.store'), [
+            ->from(route('keystone.admin.content.index'))
+            ->post(route('keystone.admin.content.store'), [
                 'title' => 'Legacy document',
                 'type' => 'document',
                 'asset' => UploadedFile::fake()->create('legacy.doc', 10, 'application/msword'),
             ])
-            ->assertRedirect(route('admin.content.index'))
+            ->assertRedirect(route('keystone.admin.content.index'))
             ->assertSessionHasErrors('asset');
 
         $this->assertDatabaseCount('content_assets', 0);
@@ -426,16 +454,16 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('admin.content.review'))
+            ->get(route('keystone.admin.content.review'))
             ->assertOk()
             ->assertSee('Choose the source material for page suggestions.');
 
         $this->actingAs($user)
-            ->post(route('admin.page-suggestions.generate'), [
+            ->post(route('keystone.admin.page-suggestions.generate'), [
                 'reviewed' => '1',
                 'asset_ids' => [$menu->id, $promotion->id],
             ])
-            ->assertRedirect(route('admin.page-suggestions.index'));
+            ->assertRedirect(route('keystone.admin.page-suggestions.index'));
 
         $this->assertDatabaseHas('onboardings', ['user_id' => $user->id, 'site_layout_remote_id' => 'layout-1']);
         Http::assertSent(fn (ClientRequest $request): bool => $request->url() === 'https://kirbycreative.co/api/site-layouts'
@@ -444,7 +472,7 @@ class AdminPanelTest extends TestCase
             && $request['base_submission_id'] === 'submission-1');
 
         $this->actingAs($user)
-            ->get(route('admin.page-suggestions.index'))
+            ->get(route('keystone.admin.page-suggestions.index'))
             ->assertOk()
             ->assertSee('Suggested site tree')
             ->assertSee('Menu')
@@ -481,11 +509,11 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from(route('admin.content.review'))
-            ->post(route('admin.page-suggestions.generate'), [
+            ->from(route('keystone.admin.content.review'))
+            ->post(route('keystone.admin.page-suggestions.generate'), [
                 'reviewed' => '1',
             ])
-            ->assertRedirect(route('admin.content.review'))
+            ->assertRedirect(route('keystone.admin.content.review'))
             ->assertSessionHasErrors('asset_ids');
     }
 
@@ -505,10 +533,10 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->patch(route('admin.page-suggestions.status', $suggestion), [
+            ->patch(route('keystone.admin.page-suggestions.status', $suggestion), [
                 'status' => PageSuggestion::STATUS_APPROVED,
             ])
-            ->assertRedirect(route('admin.page-suggestions.index'));
+            ->assertRedirect(route('keystone.admin.page-suggestions.index'));
 
         $suggestion->refresh();
 
@@ -533,11 +561,11 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->patch(route('admin.page-suggestions.status', $suggestion), [
+            ->patch(route('keystone.admin.page-suggestions.status', $suggestion), [
                 'status' => PageSuggestion::STATUS_REJECTED,
                 'rejection_feedback' => 'This should focus on catering instead of discounts.',
             ])
-            ->assertRedirect(route('admin.page-suggestions.index'));
+            ->assertRedirect(route('keystone.admin.page-suggestions.index'));
 
         $suggestion->refresh();
 
@@ -562,11 +590,11 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->from(route('admin.page-suggestions.index'))
-            ->patch(route('admin.page-suggestions.status', $suggestion), [
+            ->from(route('keystone.admin.page-suggestions.index'))
+            ->patch(route('keystone.admin.page-suggestions.status', $suggestion), [
                 'status' => PageSuggestion::STATUS_REJECTED,
             ])
-            ->assertRedirect(route('admin.page-suggestions.index'))
+            ->assertRedirect(route('keystone.admin.page-suggestions.index'))
             ->assertSessionHasErrors('rejection_feedback');
     }
 

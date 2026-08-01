@@ -1,9 +1,101 @@
-@import url("../../laravel-toolkit/resources/css/admin.css");
+@import url("../../vendor/keystone/admin/resources/css/admin.css");
 
 
 body{
     --form-label-color: #FFFFFF;
     --input-border-radius: 4px;
+}
+
+.mfa-shell {
+    width: min(58rem, 100%);
+    margin: 2rem auto;
+    color: var(--admin-text, #fff);
+}
+
+.mfa-setup__instructions {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.mfa-setup__qr {
+    padding: 0.75rem;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.mfa-setup__qr canvas {
+    display: block;
+}
+
+.mfa-secret,
+.two-factor-input {
+    display: flex;
+    gap: clamp(0.35rem, 1.2vw, 0.9rem);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.mfa-secret code {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    background: rgb(255 255 255 / 8%);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    overflow-wrap: anywhere;
+}
+
+.mfa-code-form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--admin-border);
+}
+
+.mfa-code-form[hidden] {
+    display: none;
+}
+
+.two-factor-input input {
+    width: clamp(2.7rem, 7vw, 3.5rem);
+    height: 3.75rem;
+    padding: 0;
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 3.75rem;
+    text-align: center;
+}
+
+.two-factor-input input:focus {
+    border-color: #007bc7;
+    outline: 3px solid rgb(0 123 199 / 25%);
+}
+
+.two-factor-input input:not(:placeholder-shown) {
+    border-color: #73c322;
+}
+
+.two-factor-input.error {
+    animation: mfa-shake 0.5s ease both;
+}
+
+@keyframes mfa-shake {
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+@media (max-width: 640px) {
+    .mfa-setup__instructions {
+        grid-template-columns: 1fr;
+    }
 }
 
 #brand-form {

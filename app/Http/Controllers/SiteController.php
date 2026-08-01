@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
-use Keystone\Toolkit\Services\KeystoneApiService;
+use Keystone\Admin\Services\KeystoneApiService;
 use RuntimeException;
 
 class SiteController extends Controller

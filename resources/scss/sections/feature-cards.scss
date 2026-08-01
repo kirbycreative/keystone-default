@@ -1,0 +1,6 @@
+.ai-section { background: linear-gradient(130deg, rgb(15 139 107 / 10%), transparent 36%), linear-gradient(300deg, rgb(217 154 43 / 12%), transparent 38%), #fbfcfe; border-block: 1px solid var(--line); }
+.ai-section .container { display: grid; grid-template-columns: minmax(0, .75fr) minmax(320px, .9fr); gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+.ai-grid { display: grid; gap: 1rem; } .card.ai { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 1.25rem; }
+.card.ai img { display: block; width: 150px; max-width: 150px; height: auto; } .ai-card-copy { display: flex; flex-direction: column; gap: .45rem; min-width: 0; text-align: left; }
+@media (max-width: 920px) { .ai-section .container { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .card.ai { grid-template-columns: 1fr; text-align: center; } .card.ai img { margin-inline: auto; } .ai-card-copy { align-items: center; text-align: center; } }

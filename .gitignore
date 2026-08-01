@@ -17,6 +17,7 @@
 /public/hot
 /public/storage
 /public/vendor/keystone-toolkit
+/public/vendor/keystone
 /storage/*.key
 /storage/pail
 /vendor

@@ -1,0 +1,96 @@
+{
+    "key": "feature-cards",
+    "name": "Feature Cards",
+    "section_type": "features",
+    "category": "Content",
+    "blade_view": "sections.feature-cards",
+    "css_path": "resources/scss/sections/feature-cards.scss",
+    "schema": {
+        "fields": {
+            "eyebrow": {
+                "type": "text",
+                "required": true,
+                "maxLength": 80
+            },
+            "heading": {
+                "type": "text",
+                "required": true,
+                "maxLength": 180
+            },
+            "body": {
+                "type": "textarea",
+                "required": true,
+                "maxLength": 420
+            },
+            "actions": {
+                "type": "repeater",
+                "maxItems": 3,
+                "fields": {
+                    "label": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 60
+                    },
+                    "url": {
+                        "type": "link",
+                        "required": true
+                    },
+                    "style": {
+                        "type": "select",
+                        "options": [
+                            "primary",
+                            "secondary"
+                        ]
+                    }
+                }
+            },
+            "items_label": {
+                "type": "text",
+                "required": true,
+                "maxLength": 120
+            },
+            "items": {
+                "type": "repeater",
+                "required": true,
+                "minItems": 1,
+                "maxItems": 9,
+                "fields": {
+                    "image": {
+                        "type": "image",
+                        "required": true,
+                        "role": "card"
+                    },
+                    "image_alt": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 180
+                    },
+                    "heading": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 100
+                    },
+                    "body": {
+                        "type": "textarea",
+                        "required": true,
+                        "maxLength": 300
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier"
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": true,
+        "images": true
+    },
+    "package": {
+        "version": 1,
+        "checksum": "ef8ff17dda4c38f8bd03aafaabeec35838dc032337ffc29ef2d716a2505de04f"
+    }
+}

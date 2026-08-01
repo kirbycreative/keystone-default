@@ -31,6 +31,8 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'onboarded' => true,
+            'mfa_secret' => 'JBSWY3DPEHPK3PXP',
+            'mfa_confirmed_at' => now(),
             'role' => User::ROLE_OWNER,
         ];
     }

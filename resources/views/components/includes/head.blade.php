@@ -46,9 +46,9 @@ if (!isset($page)) {
     </script>
 
     <!-- Global JS/CSS -->
-    @vite(['resources/css/style-guide-variables.css', 'resources/scss/base.scss', 'resources/js/app.js'])
+    @vite(['resources/css/style-guide-variables.css', 'resources/css/auto.compiled.css', 'vendor/keystone/admin/resources/scss/site/base.scss', 'resources/js/app.js'])
     @if (request()->is('admin/*'))
-        @vite('resources/css/admin.css')
+        @vite('vendor/keystone/admin/resources/scss/admin/keystone.scss')
     @endif
 
     <?php

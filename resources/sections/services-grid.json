@@ -1,0 +1,83 @@
+{
+    "key": "services-grid",
+    "name": "Services Grid",
+    "section_type": "services",
+    "category": "Content",
+    "blade_view": "sections.services-grid",
+    "css_path": "resources/scss/sections/services-grid.scss",
+    "schema": {
+        "fields": {
+            "eyebrow": {
+                "type": "text",
+                "required": true,
+                "maxLength": 80
+            },
+            "heading": {
+                "type": "rich_text",
+                "required": true,
+                "maxLength": 180,
+                "allowedTags": [
+                    "br"
+                ]
+            },
+            "body": {
+                "type": "rich_text",
+                "required": true,
+                "maxLength": 420,
+                "allowedTags": [
+                    "br"
+                ]
+            },
+            "items": {
+                "type": "repeater",
+                "required": true,
+                "minItems": 1,
+                "maxItems": 12,
+                "fields": {
+                    "number": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 8
+                    },
+                    "heading": {
+                        "type": "text",
+                        "required": true,
+                        "maxLength": 100
+                    },
+                    "body": {
+                        "type": "textarea",
+                        "required": true,
+                        "maxLength": 300
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "id": {
+            "type": "identifier",
+            "default": "services"
+        },
+        "particle_columns": {
+            "type": "integer",
+            "default": 15,
+            "min": 1,
+            "max": 30
+        },
+        "particle_rows": {
+            "type": "integer",
+            "default": 7,
+            "min": 1,
+            "max": 15
+        }
+    },
+    "supports": {
+        "in_page_editing": true,
+        "repeaters": true,
+        "images": false
+    },
+    "package": {
+        "version": 1,
+        "checksum": "2544da380a215eb8519abc96a4ede26319be9c589d9fcb84a1ded2b5b92d707e"
+    }
+}

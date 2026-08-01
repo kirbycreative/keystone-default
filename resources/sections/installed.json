@@ -1,0 +1,87 @@
+{
+    "format": 1,
+    "aggregate_checksum": "d7aa34422ac209fe40b06e01b0f4e095b5cee5f925bf74a6c4c3650142dec052",
+    "sections": {
+        "animated-brand-hero": {
+            "version": 1,
+            "checksum": "fd89ce5220a9b51fec0ba969f295c8edb66b02ed40b2e72b2c4e9fc1a654b96b",
+            "files": {
+                "blade": "550ec88f43285a6f898ca7cfcd0d4dd29f2058b95e6139d8b9c695ea8517abbd",
+                "scss": "d428fee69c5524c5d4a1fdf0a9cedaa23cbb2032e46fda98e0154306704e1acc",
+                "manifest": "43b8e0c12258e05a77bd322eb1d3e7608eb734ba7bcae2835ad73a38d9006e4c"
+            }
+        },
+        "feature-callout": {
+            "version": 1,
+            "checksum": "ff79ae56e2fe5b1e4197efbc412981228fb827e414b94e5b365611721007db52",
+            "files": {
+                "blade": "26974f1b65a9f3248f6db65548df40d95b8e4aeb806d9a70da6a8e6edf89c7af",
+                "scss": "50eda6daaae4bc018447167dd9904978f32c02812efb69181a7a4d3dfec8284b",
+                "manifest": "1d0c4c0a26f931c32fec2b7dff9057dd904896a9eb382658f4faa59ec8bbf2d7"
+            }
+        },
+        "feature-cards": {
+            "version": 1,
+            "checksum": "ef8ff17dda4c38f8bd03aafaabeec35838dc032337ffc29ef2d716a2505de04f",
+            "files": {
+                "blade": "5e3f5dbcf022860399e6ba06669b6ba7bfbd674dd29f696e1c848d8a3569dbcf",
+                "scss": "74156e9c2e788dce94fe30a5ec4040001bb51db290290d4f26da9e80c527e404",
+                "manifest": "59fa7872dfd2a3e8ab12af83992422c98b69f5a7731e617ed81e322c14732248"
+            }
+        },
+        "generic-content": {
+            "version": 1,
+            "checksum": "8983d8805d188c0890512b79fb7043a60cb0533d934b94508dbde6d0ed5bd651",
+            "files": {
+                "blade": "9d30c825890b60b189476b96cdb821baae5e2a2b41f3ffbe02cbcd44830de416",
+                "scss": "3de57ffb1b4e5289908bab171a7bec0bd2fadb43dd451be5fabf6fb1de9866e0",
+                "manifest": "ee9e29b45a999d9cbb58afb339ff300d7f25770879bb795d656d5a9fb2c72f6d"
+            }
+        },
+        "lead-form": {
+            "version": 1,
+            "checksum": "9a042633f5ff2536d7fd7ca7aefe2a9bb3cf4b33658879961e86afb1b1693aac",
+            "files": {
+                "blade": "f8212478298ded35a5ced341907ec616160d79381f69c073cbf40874ca978c9b",
+                "scss": "b45b3f5d3b00cc7a852c50c87b5af944a29cb4284eb2700c96969e8414a92905",
+                "manifest": "357c9c1f802600da6b215f9246419f8c950cc31bb6c8a22311f225707a00716e"
+            }
+        },
+        "metrics": {
+            "version": 1,
+            "checksum": "1a4e94942f4fcdd3db03a93172cfaa2ad34a251e269c7ead96f3a3f5b499e58f",
+            "files": {
+                "blade": "50695f8d5ac1f21120321224600628417e51b614b9747abd364525bf8b50a2d1",
+                "scss": "ec00a071c66bab254fa61ccb2da4e45ca23f1d8b94d5e8909cb76d2c42129a04",
+                "manifest": "00f582bc798cd6f27abc39c70310608ae27b97f07663b2b09baace3b8322d385"
+            }
+        },
+        "product-list": {
+            "version": 1,
+            "checksum": "bbced004397c1de2468fb84b75066365cd3f934453ede865f57db6343be7e9b0",
+            "files": {
+                "blade": "d3fcadf7211d11eac2be478e6fee8f8d5da9a311cae0ab3bf979baf01fe4d10c",
+                "scss": "f068d51b59b414882bac127619ad38f98f76f92486587c2a0120a71694177edf",
+                "manifest": "41d1280f37e7a945d30665b19a0280925997407da03ca65f4205af2eafa2bd29"
+            }
+        },
+        "services-grid": {
+            "version": 1,
+            "checksum": "2544da380a215eb8519abc96a4ede26319be9c589d9fcb84a1ded2b5b92d707e",
+            "files": {
+                "blade": "d7ed0bd493bd889a514dcf24044cc01ed3c0f3ed58de61013e9160790387275c",
+                "scss": "571a44658fdea0d5d3dc929b2976bc1906f825a4d81750a7d85f3245f4ed1975",
+                "manifest": "d0fa2a09bc225eb5f5a91b7df5f4a1a1c4b249a6b59d2b170400fb548784bbdd"
+            }
+        },
+        "split-hero": {
+            "version": 1,
+            "checksum": "8c8e71a538ea7812b5494fb61dcf5a009a13c325b7b207dbb7ad41308343797a",
+            "files": {
+                "blade": "8c212c3d5c8d54b833dbfe50343120e0f46a1eebf0c53c45e9480bdcf3f9c5e8",
+                "scss": "4d1e88b59755ce612f932d99c405a30252c28c0306c2f079991fdcc7398507b5",
+                "manifest": "9c318f1e8a6258924d9c391f63e3cb731b94c866f063a67ca3b4df9c19264e5d"
+            }
+        }
+    }
+}

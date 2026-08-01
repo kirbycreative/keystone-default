@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Http;
+use Keystone\Admin\Models\SectionTemplate;
 use Tests\TestCase;
 
 class SiteStructureTest extends TestCase
@@ -21,15 +22,24 @@ class SiteStructureTest extends TestCase
             '*/site-schema/commands' => Http::response($this->draft(str_repeat('b', 64))),
         ]);
         $editor = User::factory()->create(['onboarded' => true, 'role' => User::ROLE_EDITOR]);
+        SectionTemplate::query()->create([
+            'key' => 'hero.default',
+            'name' => 'Homepage hero',
+            'section_type' => 'hero',
+            'source_type' => 'system',
+            'blade_view' => 'sections.hero.default',
+            'is_system' => true,
+            'is_active' => true,
+        ]);
 
         $this->actingAs($editor)
-            ->get(route('admin.site-structure'))
+            ->get(route('keystone.admin.site-structure.show'))
             ->assertOk()
             ->assertSee('Pages and sections')
             ->assertSee('Homepage hero');
 
         $this->actingAs($editor)
-            ->put(route('admin.site-structure.page'), [
+            ->put(route('keystone.admin.site-structure.page'), [
                 'checksum' => $checksum,
                 'page_id' => 'page_home',
                 'title' => 'Welcome',
@@ -42,7 +52,7 @@ class SiteStructureTest extends TestCase
             ->assertSessionHas('status', 'Page saved.');
 
         $this->actingAs($editor)
-            ->put(route('admin.site-structure.section'), [
+            ->put(route('keystone.admin.site-structure.section'), [
                 'checksum' => $checksum,
                 'page_id' => 'page_home',
                 'section_id' => 'section_hero',
@@ -57,7 +67,7 @@ class SiteStructureTest extends TestCase
             ->assertSessionHas('status', 'Section saved.');
 
         $this->actingAs($editor)
-            ->put(route('admin.site-structure.navigation'), [
+            ->put(route('keystone.admin.site-structure.navigation'), [
                 'checksum' => $checksum,
                 'navigation' => json_encode(['menus' => []]),
             ])
@@ -82,12 +92,12 @@ class SiteStructureTest extends TestCase
         $viewer = User::factory()->create(['onboarded' => true, 'role' => User::ROLE_VIEWER]);
 
         $this->actingAs($viewer)
-            ->get(route('admin.site-structure'))
+            ->get(route('keystone.admin.site-structure.show'))
             ->assertOk()
             ->assertSee('View only');
 
         $this->actingAs($viewer)
-            ->put(route('admin.site-structure.page'), [
+            ->put(route('keystone.admin.site-structure.page'), [
                 'checksum' => str_repeat('a', 64),
                 'title' => 'Forbidden',
                 'path' => '/forbidden',

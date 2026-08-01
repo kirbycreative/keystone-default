@@ -19,7 +19,7 @@
             @endif
             <div id="content">
                 @if (session('status'))
-                    <div class="notice notice--success margin:bottom:1">{{ session('status') }}</div>
+                    <div class="notice notice--success margin:bottom:1rem">{{ session('status') }}</div>
                 @endif
 
                 {{ $slot }}

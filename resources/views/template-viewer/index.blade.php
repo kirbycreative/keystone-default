@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <div class="grid-3 margin:top:2">
+        <div class="grid-3 margin:top:2rem">
             <div class="stat">
                 <p class="stat__label">Total Templates</p>
                 <p class="stat__value">{{ count($templates) }}</p>
@@ -22,18 +22,18 @@
             </div>
         </div>
 
-        <div class="panel margin:top:1">
+        <div class="panel margin:top:1rem">
             <form method="GET" class="filters">
                 <div class="flex:grow">
-                    <label for="search" class="muted font-size:0o9">Search templates</label>
+                    <label for="search" class="muted font-size:0rem.9rem">Search templates</label>
                     <input type="text" id="search" name="search" value="{{ $search ?? '' }}"
                         placeholder="Search by name, path, or content..."
-                        class="admin-field margin:top:0o3">
+                        class="admin-field margin:top:0rem.3rem">
                 </div>
 
                 <div class="admin-select-wrap">
-                    <label for="category" class="muted font-size:0o9">Category</label>
-                    <select id="category" name="category" class="admin-field admin-select margin:top:0o3">
+                    <label for="category" class="muted font-size:0rem.9rem">Category</label>
+                    <select id="category" name="category" class="admin-field admin-select margin:top:0rem.3rem">
                         <option value="">All Categories</option>
                         @foreach ($categories as $cat)
                             <option value="{{ $cat }}" {{ $category === $cat ? 'selected' : '' }}>{{ $cat }}</option>
@@ -48,12 +48,12 @@
         </div>
 
         @if (empty($templates))
-            <div class="table__empty table margin:top:1">
+            <div class="table__empty table margin:top:1rem">
                 <p class="title-strong">No templates found</p>
                 <p class="muted">Try adjusting your search or filter criteria.</p>
             </div>
         @else
-            <div class="template-grid margin:top:1">
+            <div class="template-grid margin:top:1rem">
                 @foreach ($templates as $template)
                     @php
                         $preview = Str::limit(
@@ -72,16 +72,16 @@
                     <article class="template-card">
                         <div class="template-card__body">
                             <span class="badge">{{ $template['category'] }}</span>
-                            <h3 class="title-strong margin:top:0o5" title="{{ $template['path'] }}">{{ $template['name'] }}</h3>
-                            <p class="muted font-size:0o8 margin:0" title="{{ $template['path'] }}">{{ $template['path'] }}</p>
-                            <p class="template-card__preview margin:top:0o5">{{ $preview }}</p>
+                            <h3 class="title-strong margin:top:0rem.5rem" title="{{ $template['path'] }}">{{ $template['name'] }}</h3>
+                            <p class="muted font-size:0rem.8rem margin:0rem" title="{{ $template['path'] }}">{{ $template['path'] }}</p>
+                            <p class="template-card__preview margin:top:0rem.5rem">{{ $preview }}</p>
                             <div class="template-card__meta">
                                 <span>{{ $sizeKB }} KB</span>
                                 <span>{{ $modified }}</span>
                             </div>
                         </div>
                         <div class="template-card__footer">
-                            <a href="{{ route('admin.templates.show', $template['encoded_path']) }}" class="btn btn--primary btn--sm w:100">View</a>
+                            <a href="{{ route('admin.templates.show', $template['encoded_path']) }}" class="btn btn--primary btn--sm w:100%">View</a>
                         </div>
                     </article>
                 @endforeach

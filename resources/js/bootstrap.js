@@ -1,6 +1,6 @@
 import axios from "axios";
-import juice from "./vendor/juice/juice.js";
-import "./vendor/juice/forms/index.mjs";
+import juice from "../../vendor/keystone/admin/resources/js/juice/juice.js";
+import "../../vendor/keystone/admin/resources/js/juice/forms/index.mjs";
 
 //Setup Juice
 juice.expose();

@@ -28,13 +28,13 @@ class SiteSettingsTest extends TestCase
             $user = User::factory()->create(['onboarded' => true, 'role' => $role]);
 
             $this->actingAs($user)
-                ->get(route('admin.site-settings'))
+                ->get(route('keystone.admin.site-settings.show'))
                 ->assertOk()
                 ->assertSee('Site settings')
                 ->assertSee('Northstar Coffee');
 
             $this->actingAs($user)
-                ->patch(route('admin.site-settings.identity'), [
+                ->patch(route('keystone.admin.site-settings.identity'), [
                     'checksum' => $checksum,
                     'name' => 'Northstar Roasters',
                     'legal_name' => 'Northstar Coffee LLC',
@@ -53,7 +53,7 @@ class SiteSettingsTest extends TestCase
             && $request->hasHeader('Idempotency-Key'));
 
         $this->actingAs(User::where('role', User::ROLE_OWNER)->firstOrFail())
-            ->patch(route('admin.site-settings.features'), [
+            ->patch(route('keystone.admin.site-settings.features'), [
                 'checksum' => $checksum,
                 'forms_enabled' => '1',
                 'analytics_enabled' => '1',
@@ -64,7 +64,7 @@ class SiteSettingsTest extends TestCase
             ->assertSessionHas('status', 'Feature settings saved.');
 
         $this->actingAs(User::where('role', User::ROLE_OWNER)->firstOrFail())
-            ->patch(route('admin.site-settings.integrations'), [
+            ->patch(route('keystone.admin.site-settings.integrations'), [
                 'checksum' => $checksum,
                 'integrations' => json_encode([[
                     'key' => 'contact_delivery',
@@ -93,13 +93,13 @@ class SiteSettingsTest extends TestCase
         $viewer = User::factory()->create(['onboarded' => true, 'role' => User::ROLE_VIEWER]);
 
         $this->actingAs($viewer)
-            ->get(route('admin.site-settings'))
+            ->get(route('keystone.admin.site-settings.show'))
             ->assertOk()
             ->assertSee('View only')
             ->assertDontSee('Save identity');
 
         $this->actingAs($viewer)
-            ->patch(route('admin.site-settings.identity'), [
+            ->patch(route('keystone.admin.site-settings.identity'), [
                 'checksum' => str_repeat('a', 64),
                 'name' => 'Forbidden',
                 'locale' => 'en-US',
@@ -116,10 +116,10 @@ class SiteSettingsTest extends TestCase
         $viewer->onboardingState()->update(['generation_stage' => 'content_ready']);
 
         $this->actingAs($viewer)
-            ->post(route('admin.content.store'))
+            ->post(route('keystone.admin.content.store'))
             ->assertForbidden();
         $this->actingAs($viewer)
-            ->post(route('admin.page-suggestions.generate'))
+            ->post(route('keystone.admin.page-suggestions.generate'))
             ->assertForbidden();
     }
 
@@ -137,7 +137,7 @@ class SiteSettingsTest extends TestCase
         Cache::put('canonical-site.published', ['stale' => true], 300);
 
         $this->actingAs($owner)
-            ->post(route('admin.site-settings.publish'), [
+            ->post(route('keystone.admin.site-settings.publish'), [
                 'checksum' => $checksum,
                 'change_summary' => 'Initial reviewed publication.',
             ])
@@ -146,12 +146,12 @@ class SiteSettingsTest extends TestCase
         $this->assertFalse(Cache::has('canonical-site.published'));
 
         $this->actingAs($owner)
-            ->post(route('admin.site-settings.rollback', '01VERSION'))
+            ->post(route('keystone.admin.site-settings.rollback', '01VERSION'))
             ->assertRedirect()
             ->assertSessionHas('status', 'A new draft was created from the selected version.');
 
         $this->actingAs($editor)
-            ->post(route('admin.site-settings.publish'), [
+            ->post(route('keystone.admin.site-settings.publish'), [
                 'checksum' => $checksum,
                 'change_summary' => 'Editors cannot publish.',
             ])

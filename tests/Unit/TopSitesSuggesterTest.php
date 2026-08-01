@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Services\TopSitesSuggester;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
-use Keystone\Toolkit\Services\KeystoneApiService;
+use Keystone\Admin\Services\KeystoneApiService;
+use Keystone\Admin\Services\TopSitesSuggester;
 use Mockery;
 use Tests\TestCase;
 

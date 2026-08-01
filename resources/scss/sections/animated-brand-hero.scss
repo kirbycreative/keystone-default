@@ -1,0 +1,15 @@
+#welcome #hero { padding-block: 0; padding-top: 0; position: relative; overflow: hidden; background: var(--color-secondary); height: 100vh; max-height: 100vh; }
+#welcome #hero .container { position: relative; min-height: inherit; }
+#welcome #hero .hero-logo-container { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+#welcome #hero .hero-content-container { height: 100%; }
+#welcome #hero #kc-logo { height: 70vh; }
+#welcome #hero .text-panel { position: absolute; z-index: 10; left: 47%; top: calc(22% - 100px); width: min(50%, 48rem); opacity: 0; transition: top 750ms cubic-bezier(.22, 1, .36, 1), opacity 750ms ease-out; }
+#welcome #hero .text-panel.is-visible { top: 22%; opacity: 1; }
+#welcome #hero h1 { font-size: clamp(3rem, 7.22vw, 6.5rem); line-height: 1; margin: 0; }
+#welcome #hero h1.hero-word-rotator { color: #d2d2d2; }
+#welcome #hero p { font-size: clamp(1rem, 1.67vw, 1.5rem); color: #fff; width: min(80%, 44rem); margin-top: clamp(2rem, 4.45vw, 4rem); }
+#welcome #hero .hero-word-rotator { display: grid; overflow: hidden; width: max-content; max-width: 100%; white-space: nowrap; }
+#welcome #hero .hero-word-rotator__word { grid-area: 1 / 1; visibility: hidden; opacity: 0; transform: translateY(-110%); transition: transform 650ms cubic-bezier(.22, 1, .36, 1), opacity 300ms ease; }
+#welcome #hero .hero-word-rotator__word.is-active, #welcome #hero .hero-word-rotator__word.is-leaving { visibility: visible; }
+#welcome #hero .hero-word-rotator__word.is-active { opacity: 1; transform: translateY(0); }
+#welcome #hero .hero-word-rotator__word.is-leaving { opacity: 0; transform: translateY(110%); }

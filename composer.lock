@@ -1060,11 +1060,11 @@
         },
         {
             "name": "keystone/admin",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "ssh://git@ssh.github.com:443/kirbycreative/keystone-toolkit.git",
-                "reference": "846eac0ceabae6850458d75e11250ce219bea1aa"
+                "reference": "2971341e0a2d37b7147a609343b1b36f8de04f92"
             },
             "require": {
                 "illuminate/database": "^12.0",
@@ -1097,7 +1097,7 @@
                 "proprietary"
             ],
             "description": "Protected Keystone admin components and utilities for managed Laravel sites.",
-            "time": "2026-08-01T21:46:28+00:00"
+            "time": "2026-08-02T03:46:03+00:00"
         },
         {
             "name": "laravel/framework",

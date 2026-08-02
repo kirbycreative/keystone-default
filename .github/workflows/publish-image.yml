@@ -111,7 +111,7 @@ jobs:
           push: true
           tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.release.outputs.tag }}
           labels: |
-            org.opencontainers.image.source=git@github.com:kirbycreative/keystone-default.git
+            org.opencontainers.image.source=https://github.com/kirbycreative/keystone-default.git
             org.opencontainers.image.version=${{ steps.release.outputs.tag }}
             org.opencontainers.image.revision=${{ steps.source.outputs.sha }}
           provenance: mode=max
@@ -128,7 +128,7 @@ jobs:
           set -euo pipefail
 
           image="${ECR_REGISTRY}/${ECR_REPOSITORY}@${IMAGE_DIGEST}"
-          release="git@github.com:kirbycreative/keystone-default.git@${RELEASE_TAG}"
+          release="https://github.com/kirbycreative/keystone-default.git@${RELEASE_TAG}"
 
           {
             echo "## Published Keystone Client release"

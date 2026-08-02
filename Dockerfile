@@ -27,7 +27,9 @@ COPY --from=frontend /app/public/build public/build
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint
-RUN chmod +x /usr/local/bin/entrypoint \
+RUN APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= php artisan view:cache \
+    && php artisan view:clear \
+    && chmod +x /usr/local/bin/entrypoint \
     && chown -R www-data:www-data storage bootstrap/cache database
 ENV APP_ENV=production APP_DEBUG=false LOG_CHANNEL=stderr
 EXPOSE 8080

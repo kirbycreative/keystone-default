@@ -1,6 +1,6 @@
 {
     "format": 1,
-    "aggregate_checksum": "d7aa34422ac209fe40b06e01b0f4e095b5cee5f925bf74a6c4c3650142dec052",
+    "aggregate_checksum": "a54c462bae5051164afa5d92533fd390bee36e8bb98f9d7405df72856f67d5af",
     "sections": {
         "animated-brand-hero": {
             "version": 1,
@@ -8,7 +8,7 @@
             "files": {
                 "blade": "550ec88f43285a6f898ca7cfcd0d4dd29f2058b95e6139d8b9c695ea8517abbd",
                 "scss": "d428fee69c5524c5d4a1fdf0a9cedaa23cbb2032e46fda98e0154306704e1acc",
-                "manifest": "43b8e0c12258e05a77bd322eb1d3e7608eb734ba7bcae2835ad73a38d9006e4c"
+                "manifest": "0f559db0e53dd6fde0abc6b92ce983b525ad7e1178f7211c43580c00db594eb6"
             }
         },
         "feature-callout": {
@@ -17,7 +17,7 @@
             "files": {
                 "blade": "26974f1b65a9f3248f6db65548df40d95b8e4aeb806d9a70da6a8e6edf89c7af",
                 "scss": "50eda6daaae4bc018447167dd9904978f32c02812efb69181a7a4d3dfec8284b",
-                "manifest": "1d0c4c0a26f931c32fec2b7dff9057dd904896a9eb382658f4faa59ec8bbf2d7"
+                "manifest": "ef156780bd26808939bf760dc22b67c153301134b52ce7938129e57153e6f2ac"
             }
         },
         "feature-cards": {
@@ -26,7 +26,7 @@
             "files": {
                 "blade": "5e3f5dbcf022860399e6ba06669b6ba7bfbd674dd29f696e1c848d8a3569dbcf",
                 "scss": "74156e9c2e788dce94fe30a5ec4040001bb51db290290d4f26da9e80c527e404",
-                "manifest": "59fa7872dfd2a3e8ab12af83992422c98b69f5a7731e617ed81e322c14732248"
+                "manifest": "b8661066329c347b0fb5655d6f82b947d06d35605c6314c24a814e3fc6cfc893"
             }
         },
         "generic-content": {
@@ -35,7 +35,7 @@
             "files": {
                 "blade": "9d30c825890b60b189476b96cdb821baae5e2a2b41f3ffbe02cbcd44830de416",
                 "scss": "3de57ffb1b4e5289908bab171a7bec0bd2fadb43dd451be5fabf6fb1de9866e0",
-                "manifest": "ee9e29b45a999d9cbb58afb339ff300d7f25770879bb795d656d5a9fb2c72f6d"
+                "manifest": "1213a18e0f5328470cfeac2f01c36d2fe9341fde71cf4687579cb9bce60cd3f2"
             }
         },
         "lead-form": {
@@ -44,7 +44,7 @@
             "files": {
                 "blade": "f8212478298ded35a5ced341907ec616160d79381f69c073cbf40874ca978c9b",
                 "scss": "b45b3f5d3b00cc7a852c50c87b5af944a29cb4284eb2700c96969e8414a92905",
-                "manifest": "357c9c1f802600da6b215f9246419f8c950cc31bb6c8a22311f225707a00716e"
+                "manifest": "8b5083097a1a5c86c77af932f4bd691a255abe3ec02e4f62625b76b7d016556a"
             }
         },
         "metrics": {
@@ -53,7 +53,7 @@
             "files": {
                 "blade": "50695f8d5ac1f21120321224600628417e51b614b9747abd364525bf8b50a2d1",
                 "scss": "ec00a071c66bab254fa61ccb2da4e45ca23f1d8b94d5e8909cb76d2c42129a04",
-                "manifest": "00f582bc798cd6f27abc39c70310608ae27b97f07663b2b09baace3b8322d385"
+                "manifest": "68b439c5d872e04c600dede220d7bf258ae834ffa605db37986dc83b758370b2"
             }
         },
         "product-list": {
@@ -62,7 +62,7 @@
             "files": {
                 "blade": "d3fcadf7211d11eac2be478e6fee8f8d5da9a311cae0ab3bf979baf01fe4d10c",
                 "scss": "f068d51b59b414882bac127619ad38f98f76f92486587c2a0120a71694177edf",
-                "manifest": "41d1280f37e7a945d30665b19a0280925997407da03ca65f4205af2eafa2bd29"
+                "manifest": "f3d33b52feae6d6762cd348f8813e9b2379abe810e6abd0b9a990c8d7878ea8c"
             }
         },
         "services-grid": {
@@ -71,7 +71,7 @@
             "files": {
                 "blade": "d7ed0bd493bd889a514dcf24044cc01ed3c0f3ed58de61013e9160790387275c",
                 "scss": "571a44658fdea0d5d3dc929b2976bc1906f825a4d81750a7d85f3245f4ed1975",
-                "manifest": "d0fa2a09bc225eb5f5a91b7df5f4a1a1c4b249a6b59d2b170400fb548784bbdd"
+                "manifest": "3e4022805142a32c4e55403f826f10e95d919c8cf60819d0df1ecc169d5be457"
             }
         },
         "split-hero": {
@@ -80,7 +80,7 @@
             "files": {
                 "blade": "8c212c3d5c8d54b833dbfe50343120e0f46a1eebf0c53c45e9480bdcf3f9c5e8",
                 "scss": "4d1e88b59755ce612f932d99c405a30252c28c0306c2f079991fdcc7398507b5",
-                "manifest": "9c318f1e8a6258924d9c391f63e3cb731b94c866f063a67ca3b4df9c19264e5d"
+                "manifest": "fb4aa10ea341153670377a73f6e7fad243bca94415f870a59bfc5403945f126f"
             }
         }
     }

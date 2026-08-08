@@ -69,7 +69,6 @@
         ],
         "post-install-cmd": [
             "@php artisan vendor:publish --tag=keystone-assets --ansi --force",
-            "@php artisan vendor:publish --tag=keystone-toolkit-assets --ansi --force",
             "@php artisan keystone:sections:install --ansi"
         ],
         "post-root-package-install": [

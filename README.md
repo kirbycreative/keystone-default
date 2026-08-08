@@ -57,9 +57,9 @@ Production deployments should use `git submodule update --init --recursive`
 without `--remote`. This installs the exact Juice commit pinned by this
 repository.
 
-The production image installs the private `kirbycreative/keystone-toolkit`
-Composer package using BuildKit SSH forwarding. Configure the repository
-secret `KEYSTONE_TOOLKIT_SSH_KEY` with a read-only deploy key for that package.
+The production image installs the private `keystone/admin` Composer package
+using BuildKit SSH forwarding. Configure the repository secret
+`KEYSTONE_TOOLKIT_SSH_KEY` with a read-only deploy key for the Keystone package.
 For local builds, load the same authorized key into your SSH agent and run:
 
 ```bash

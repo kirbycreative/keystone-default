@@ -23,7 +23,7 @@ class SiteController extends Controller
             $version = $this->published($api);
         } catch (RuntimeException $exception) {
             if ($this->siteHasNotBeenPublished($exception)) {
-                return redirect()->route('login');
+                return redirect()->route($request->user() ? 'keystone.admin.dashboard' : 'login');
             }
 
             throw $exception;

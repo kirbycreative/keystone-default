@@ -28,6 +28,14 @@ class SiteStructureTest extends TestCase
             'section_type' => 'hero',
             'source_type' => 'system',
             'blade_view' => 'sections.hero.default',
+            'schema' => ['fields' => [
+                'heading' => ['type' => 'text', 'required' => true, 'maxLength' => 180],
+                'actions' => ['type' => 'repeater', 'maxItems' => 3, 'fields' => [
+                    'label' => ['type' => 'text', 'required' => true, 'maxLength' => 60],
+                    'url' => ['type' => 'link', 'required' => true],
+                ]],
+            ]],
+            'settings' => ['columns' => ['type' => 'integer', 'default' => 2, 'min' => 1, 'max' => 4]],
             'is_system' => true,
             'is_active' => true,
         ]);
@@ -36,7 +44,12 @@ class SiteStructureTest extends TestCase
             ->get(route('keystone.admin.site-structure.show'))
             ->assertOk()
             ->assertSee('Pages and sections')
-            ->assertSee('Homepage hero');
+            ->assertSee('Homepage hero')
+            ->assertSee('name="content[heading]"', false)
+            ->assertSee('data-repeater-add', false)
+            ->assertSee('name="settings[columns]"', false)
+            ->assertSee('Add section')
+            ->assertSee('Delete section');
 
         $this->actingAs($editor)
             ->put(route('keystone.admin.site-structure.page'), [
@@ -57,11 +70,14 @@ class SiteStructureTest extends TestCase
                 'page_id' => 'page_home',
                 'section_id' => 'section_hero',
                 'name' => 'Homepage hero',
-                'type' => 'hero',
                 'template' => 'hero.default',
                 'order' => 0,
                 'enabled' => '1',
-                'content' => json_encode(['heading' => 'Fresh coffee']),
+                'content' => [
+                    'heading' => 'Fresh coffee',
+                    'actions' => [['label' => 'Order now', 'url' => '/order']],
+                ],
+                'settings' => ['columns' => '3'],
             ])
             ->assertRedirect()
             ->assertSessionHas('status', 'Section saved.');
@@ -79,7 +95,9 @@ class SiteStructureTest extends TestCase
             && data_get($request->data(), 'payload.page.title') === 'Welcome');
         Http::assertSent(fn (ClientRequest $request): bool => $request->url() === 'https://kirbycreative.co/api/site-schema/commands'
             && $request['command'] === 'section.upsert'
-            && data_get($request->data(), 'payload.section.content.heading') === 'Fresh coffee');
+            && data_get($request->data(), 'payload.section.content.heading') === 'Fresh coffee'
+            && data_get($request->data(), 'payload.section.content.actions.0.label') === 'Order now'
+            && data_get($request->data(), 'payload.section.settings.columns') === 3);
         Http::assertSent(fn (ClientRequest $request): bool => $request->url() === 'https://kirbycreative.co/api/site-schema/commands'
             && $request['command'] === 'navigation.replace'
             && data_get($request->data(), 'payload.menus') === []);

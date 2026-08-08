@@ -47,6 +47,31 @@ class AdminPanelTest extends TestCase
         $this->assertStringContainsString('https://client.example.test/build/assets/', $response->getContent());
     }
 
+    public function test_admin_dashboard_always_loads_the_admin_stylesheet(): void
+    {
+        $response = $this
+            ->actingAs(User::factory()->create())
+            ->withSession(['mfa_passed' => true])
+            ->get(route('keystone.admin.dashboard'));
+
+        $response->assertOk();
+        $this->assertStringContainsString('/build/assets/keystone-', $response->getContent());
+        $response->assertSee('Content Library')->assertSee('Site Editor');
+    }
+
+    public function test_mfa_setup_always_loads_the_admin_stylesheet(): void
+    {
+        $response = $this
+            ->actingAs(User::factory()->create([
+                'mfa_secret' => null,
+                'mfa_confirmed_at' => null,
+            ]))
+            ->get(route('keystone.admin.mfa.setup'));
+
+        $response->assertOk();
+        $this->assertStringContainsString('/build/assets/keystone-', $response->getContent());
+    }
+
     public function test_user_must_verify_mfa_after_logging_in(): void
     {
         $this->fakePublishedSite();

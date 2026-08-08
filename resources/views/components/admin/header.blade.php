@@ -15,7 +15,7 @@
                             class="{{ request()->routeIs('keystone.admin.dashboard') ? 'is-active' : '' }}">Dashboard</a></li>
                     @if ($user->onboardingState()->contentUnlocked())
                         <li><a href="{{ route('keystone.admin.content.index') }}"
-                                class="{{ request()->routeIs('keystone.admin.content.index') ? 'is-active' : '' }}">Content</a></li>
+                                class="{{ request()->routeIs('keystone.admin.content.index') ? 'is-active' : '' }}">Content Library</a></li>
                         <li><a href="{{ route('keystone.admin.content.review') }}"
                                 class="{{ request()->routeIs('keystone.admin.content.review') ? 'is-active' : '' }}">Review</a></li>
                     @endif
@@ -27,7 +27,7 @@
                     <li><a href="{{ route('keystone.admin.site-settings.show') }}"
                             class="{{ request()->routeIs('keystone.admin.site-settings.*') ? 'is-active' : '' }}">Site Settings</a></li>
                     <li><a href="{{ route('keystone.admin.site-structure.show') }}"
-                            class="{{ request()->routeIs('keystone.admin.site-structure.*') ? 'is-active' : '' }}">Structure</a></li>
+                            class="{{ request()->routeIs('keystone.admin.site-structure.*') ? 'is-active' : '' }}">Site Editor</a></li>
                     <li><a href="{{ route('admin.site-preview') }}">Preview</a></li>
                 </ul>
             </nav>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
-<x-includes.head :title="page()->title" />
+<x-includes.head :title="page()->title" :admin="true" />
 
 <body id="{{ page()->id }}" class="{{ page()->class() }}">
 

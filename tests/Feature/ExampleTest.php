@@ -42,6 +42,20 @@ class ExampleTest extends TestCase
         $this->get('/')->assertRedirect(route('login'));
     }
 
+    public function test_an_authenticated_owner_of_an_unpublished_site_is_sent_to_the_admin_dashboard(): void
+    {
+        $this->configureApi();
+        Http::fake([
+            '*/site-schema/published' => Http::response([
+                'message' => 'This site has not been published.',
+            ], 404),
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->get('/')
+            ->assertRedirect(route('keystone.admin.dashboard'));
+    }
+
     public function test_preview_and_public_site_use_the_same_renderer_with_different_versions(): void
     {
         $this->configureApi();

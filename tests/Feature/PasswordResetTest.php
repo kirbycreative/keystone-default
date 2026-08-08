@@ -23,6 +23,11 @@ class PasswordResetTest extends TestCase
         Http::fake(['*' => Http::response(['sent' => true])]);
         $user = User::factory()->create();
 
+        $this->get(route('password.request'))
+            ->assertOk()
+            ->assertSee('account-login-card')
+            ->assertSee('<input-text name="email"', false);
+
         $this->post(route('password.email'), ['email' => $user->email])->assertSessionHas('status');
 
         $resetUrl = null;
@@ -34,7 +39,11 @@ class PasswordResetTest extends TestCase
                 && is_string($resetUrl);
         });
 
-        $this->get($resetUrl)->assertOk();
+        $this->get($resetUrl)
+            ->assertOk()
+            ->assertSee('account-login-card')
+            ->assertSee('<input-text name="password"', false)
+            ->assertSee('<input-text name="password_confirmation"', false);
 
         $token = basename((string) parse_url($resetUrl, PHP_URL_PATH));
         $this->post(route('password.update'), [
